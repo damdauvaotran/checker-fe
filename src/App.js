@@ -6,20 +6,24 @@ import {
   Link
 } from "react-router-dom";
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import "antd/dist/antd.css";
+import { directive } from '@babel/types';
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path='/'>
-          Hello world
+    <div className='App'>
+      <Router>
+        <Switch>
+          <Route exact path='/'>
+            Hello world
         </Route>
-        <Route path='/about'>
-          About
+          <Route path='/about'>
+            About
         </Route>
-      </Switch>
-    </Router>
+        </Switch>
+      </Router>
+    </div>
   );
 }
 
