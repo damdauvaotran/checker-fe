@@ -9,7 +9,7 @@ import logo from './logo.svg';
 import './App.scss';
 import "antd/dist/antd.css";
 import { directive } from '@babel/types';
-import Layout from './Layout'
+import Layout from './shared-component/Layout'
 import Login from './pages/login'
 
 function App() {
