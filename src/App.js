@@ -9,6 +9,8 @@ import logo from './logo.svg';
 import './App.scss';
 import "antd/dist/antd.css";
 import { directive } from '@babel/types';
+import Layout from './Layout'
+import Login from './pages/login'
 
 function App() {
   return (
@@ -16,11 +18,11 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/'>
-            Hello world
-        </Route>
+            <Login/>
+          </Route>
           <Route path='/about'>
             About
-        </Route>
+          </Route>
         </Switch>
       </Router>
     </div>
