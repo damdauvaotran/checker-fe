@@ -23,8 +23,12 @@ function App() {
           <Route path='/about'>
             About
           </Route>
+          <Route path='/register'>
+            register
+          </Route>
         </Switch>
       </Router>
+
     </div>
   );
 }
