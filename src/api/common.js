@@ -2,11 +2,12 @@ import axios from 'axios'
 
 const defaultEndpoint = 'http://localhost:8000';
 
-const makeRequest = (config) => {
-  return axios({
+const makeRequest = async (config) => {
+  const res = await axios({
     ...config,
     baseURL: defaultEndpoint,
   })
+  return res.data;
 }
 
 const makeAuthRequest = (config) => {

@@ -1,8 +1,9 @@
 import React from "react";
 import withLayout from "../../shared-component/Layout";
 import {login} from '../../api/auth'
-import {Form, Icon, Input, Button, Checkbox, Card} from "antd";
+import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
+import {useTranslation, withTranslation} from "react-i18next";
 
 class Login extends React.Component {
   constructor(props) {
@@ -11,21 +12,37 @@ class Login extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-       console.log(login())
+        try {
+          const res = await login({
+            username: values.username,
+            password: values.password,
+          });
+          console.log("res", res)
+          if (res.success) {
+            message.success('Đăng nhập thành công');
+          } else {
+            message.error(res.message);
+          }
+
+        } catch (e) {
+
+        }
+
       }
     });
   };
 
   render() {
     const {getFieldDecorator} = this.props.form;
+    const {t} = this.props;
     return (
       <div className="login-background">
         <Card style={{width: 300}}>
           <div>
-            <div className='login-title'>Checker</div>
+            <div className='login-title'>{t('app.title')}</div>
             <div>Học đi mà làm người</div>
           </div>
 
@@ -83,4 +100,4 @@ class Login extends React.Component {
 }
 
 const WrappedNormalLoginForm = Form.create({name: "normal_login"})(Login);
-export default WrappedNormalLoginForm;
+export default withTranslation()(WrappedNormalLoginForm);
