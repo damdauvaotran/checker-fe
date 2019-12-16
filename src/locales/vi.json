@@ -1,8 +1,21 @@
 {
   "hello": "Chao",
   "app": {
-    "title": "Checker"
+    "title": "Checker",
+    "slogan": "Học đi mà làm người"
   },
-  "pages": {
+  "page": {
+    "login": {
+      "title": "Đăng nhập",
+      "button": {
+        "login": "Đăng nhập"
+      }
+    },
+    "register": {
+      "title": "Đăng ký",
+      "button": {
+        "register": "Đăng ký"
+      }
+    }
   }
 }

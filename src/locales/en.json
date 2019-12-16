@@ -1,7 +1,8 @@
 {
   "hello": "Hello",
   "app": {
-    "title": "Checker"
+    "title": "Checker",
+    "slogan": "Learn to live"
   },
   "pages": {
   }

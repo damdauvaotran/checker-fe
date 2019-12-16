@@ -3,7 +3,8 @@ import withLayout from "../../shared-component/Layout";
 import {login} from '../../api/auth'
 import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
-import {useTranslation, withTranslation} from "react-i18next";
+import {withTranslation} from "react-i18next";
+import cookies from 'js-cookie'
 
 class Login extends React.Component {
   constructor(props) {
@@ -23,14 +24,13 @@ class Login extends React.Component {
           console.log("res", res)
           if (res.success) {
             message.success('Đăng nhập thành công');
+            cookies.set('checkerToken', res.data.token, {expires: 3})
           } else {
             message.error(res.message);
           }
-
         } catch (e) {
-
+          console.error(e)
         }
-
       }
     });
   };
@@ -43,7 +43,7 @@ class Login extends React.Component {
         <Card style={{width: 300}}>
           <div>
             <div className='login-title'>{t('app.title')}</div>
-            <div>Học đi mà làm người</div>
+            <div>{t('app.slogan')}</div>
           </div>
 
           <Form onSubmit={this.handleSubmit} className="login-form">
@@ -89,7 +89,7 @@ class Login extends React.Component {
                 htmlType="submit"
                 className="login-form-button"
               >
-                Log in
+                {t('page.login.button.login')}
               </Button>
             </Form.Item>
           </Form>

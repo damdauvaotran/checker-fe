@@ -3,6 +3,7 @@ import withLayout from "../../shared-component/Layout";
 import {login, register} from '../../api/auth'
 import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
+import {withTranslation} from "react-i18next";
 
 class Register extends React.Component {
   constructor(props) {
@@ -35,13 +36,14 @@ class Register extends React.Component {
   };
 
   render() {
+    const {t} = this.props;
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="login-background">
         <Card style={{width: 300}}>
           <div>
-            <div className='login-title'>Checker</div>
-            <div>Học đi mà làm người</div>
+            <div className='login-title'>{t('app.title')}</div>
+            <div>{t('app.slogan')}</div>
           </div>
 
           <Form onSubmit={this.handleSubmit} className="login-form">
@@ -105,25 +107,18 @@ class Register extends React.Component {
                   prefix={
                     <Icon type="lock" style={{color: "rgba(0,0,0,.25)"}}/>
                   }
-                  type="password"
-                  placeholder="Repeat Password"
+                  type="test"
+                  placeholder="Name"
                 />
               )}
             </Form.Item>
             <Form.Item>
-              {getFieldDecorator("remember", {
-                valuePropName: "checked",
-                initialValue: true
-              })(<Checkbox>Remember me</Checkbox>)}
-              <a className="login-form-forgot" href="">
-                Forgot password
-              </a>
               <Button
                 type="primary"
                 htmlType="submit"
                 className="login-form-button"
               >
-                Log in
+                {t('page.register.button.register')}
               </Button>
             </Form.Item>
           </Form>
@@ -134,4 +129,4 @@ class Register extends React.Component {
 }
 
 const WrappedNormalRegisterForm = Form.create({name: "normal_register"})(Register);
-export default WrappedNormalRegisterForm;
+export default withTranslation()(WrappedNormalRegisterForm);
