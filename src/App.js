@@ -42,7 +42,6 @@ function App() {
           <Route exact path='/'>
             {
               requireAuth(<ExamRegister/>)
-
             }
             Chán đ muốn code nũa
           </Route>
