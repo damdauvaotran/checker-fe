@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link, withRouter
+  Link, withRouter, Redirect
 } from "react-router-dom";
 import logo from './logo.svg';
 import './App.scss';
@@ -16,6 +16,7 @@ import Dashboard from './pages/dashboard'
 import i18n from "i18next";
 import {withTranslation, useTranslation, initReactI18next} from "react-i18next";
 import translationVI from './locales/vi.json';
+import {isLogin} from './utils/auth'
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -38,7 +39,9 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/'>
-            <Dashboard/>
+            {
+              requireAuth(<Dashboard/>)
+            }
           </Route>
           <Route path='/login'>
             <Login/>
@@ -54,6 +57,20 @@ function App() {
       </Router>
     </div>
   );
+}
+
+function requireAuth(component) {
+  if (isLogin()) {
+    return (
+      component
+    )
+  }
+  return <Redirect
+    to={{
+      pathname: "/login",
+    }}
+  />
+
 }
 
 export default App;
