@@ -13,6 +13,7 @@ import Layout from './shared-component/Layout'
 import Login from './pages/login';
 import Register from './pages/register';
 import Dashboard from './pages/dashboard'
+import ExamRegister from "./pages/examRegister";
 import i18n from "i18next";
 import {withTranslation, useTranslation, initReactI18next} from "react-i18next";
 import translationVI from './locales/vi.json';
@@ -40,8 +41,10 @@ function App() {
         <Switch>
           <Route exact path='/'>
             {
-              requireAuth(<Dashboard/>)
+              requireAuth(<ExamRegister/>)
+
             }
+            Chán đ muốn code nũa
           </Route>
           <Route path='/login'>
             <Login/>

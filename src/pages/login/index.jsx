@@ -5,26 +5,31 @@ import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
 import {withTranslation} from "react-i18next";
 import cookies from 'js-cookie'
+import {Redirect} from "react-router-dom";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isLoginSuccess: false
+    }
   }
 
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
         try {
           const res = await login({
             username: values.username,
             password: values.password,
           });
-          console.log("res", res)
           if (res.success) {
             message.success('Đăng nhập thành công');
             cookies.set('checkerToken', res.data.token, {expires: 3})
+            this.setState({
+              isLoginSuccess: true
+            })
           } else {
             message.error(res.message);
           }
@@ -38,6 +43,12 @@ class Login extends React.Component {
   render() {
     const {getFieldDecorator} = this.props.form;
     const {t} = this.props;
+    const {isLoginSuccess} = this.state
+    if (isLoginSuccess){
+      return (
+        <Redirect to={{pathname: '/'}}></Redirect>
+      )
+    }
     return (
       <div className="login-background">
         <Card style={{width: 300}}>
@@ -81,9 +92,9 @@ class Login extends React.Component {
                 valuePropName: "checked",
                 initialValue: true
               })(<Checkbox>Remember me</Checkbox>)}
-              <a className="login-form-forgot" href="">
-                Forgot password
-              </a>
+              {/*<a className="login-form-forgot" href="">*/}
+              {/*  Forgot password*/}
+              {/*</a>*/}
               <Button
                 type="primary"
                 htmlType="submit"

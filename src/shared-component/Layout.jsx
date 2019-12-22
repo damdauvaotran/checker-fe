@@ -1,32 +1,96 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
-import {Layout, Menu, Breadcrumb} from 'antd';
+import {BrowserRouter as Router, Switch, Route, Link, Redirect} from "react-router-dom";
+import {Layout, Menu, Breadcrumb, Icon, Button} from 'antd';
+import './layout.scss'
 
-const {Header, Content, Footer} = Layout;
+import {getUserData , clearUserToken} from '../utils/auth'
+
+const {SubMenu} = Menu;
+
+
+const {Header, Content, Footer, Sider} = Layout;
+
 
 export const withLayout = (WrappedComponent) => {
+
+  class BasicLayout extends React.Component {
+
+    state = {
+      collapsed: false,
+      isLogOut: false,
+    };
+
+    onCollapse = collapsed => {
+      console.log(collapsed);
+      this.setState({collapsed});
+    };
+
+    onLogOut = ()=>{
+      clearUserToken()
+      this.setState({
+        isLogOut: true
+      })
+    }
+
+    render() {
+      if (this.state.isLogOut){
+        return (
+          <Redirect to='/login'></Redirect>
+        )
+      }
+      getUserData()
+      return (
+        <Layout style={{minHeight: '100vh'}}>
+          <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} theme='light'>
+            <div className="logo">Checker</div>
+            <Menu
+              defaultSelectedKeys={['1']}
+              style={{lineHeight: '64px'}}
+              mode="inline"
+            >
+              <Menu.Item key="1">
+                 <span className="submenu-title-wrapper">
+                  <Icon type="team"/>
+                  Đăng ký thi
+                </span>
+              </Menu.Item>
+              <Menu.Item key="3">
+                 <span className="submenu-title-wrapper">
+                  <Icon type="team"/>
+                  Xem kết quả
+                </span>
+              </Menu.Item>
+              <SubMenu title={
+                <span className="submenu-title-wrapper">
+                  <Icon type="team"/>
+                  Admin
+                </span>
+              }>
+                <Menu.Item key="2"><Link to=''>About</Link></Menu.Item>
+              </SubMenu>
+            </Menu>
+          </Sider>
+
+          <Layout className="layout">
+            <Header style={{background: '#fff', padding: 0}}>
+              <div className='header'>
+                <Button type="danger" onClick={this.onLogOut}>Logout</Button>
+              </div>
+            </Header>
+            <Content style={{padding: '0 50px'}}>
+              <div style={{background: '#fff', padding: 24, minHeight: 'calc(100vh - 64px - 79px)', marginTop: 10}}>
+                <WrappedComponent/>
+              </div>
+            </Content>
+            <Footer style={{textAlign: 'center'}}>Checker ©2018 Created by Checker Team</Footer>
+          </Layout>
+        </Layout>
+      )
+    }
+  }
+
   return (() => (
-      <Layout className="layout">
-        <Header>
-          <div className="logo"/>
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['2']}
-            style={{lineHeight: '64px'}}
-          >
-            <Menu.Item key="1"><Link to='about'>About</Link></Menu.Item>
-            <Menu.Item key="2"><Link to='login'></Link></Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
-          </Menu>
-        </Header>
-        <Content style={{padding: '0 50px'}}>
-          <div style={{background: '#fff', padding: 24, minHeight: 'calc(100vh - 64px - 69px)'}}>
-            <WrappedComponent/>
-          </div>
-        </Content>
-        <Footer style={{textAlign: 'center'}}>Checker ©2018 Created by Checker Team</Footer>
-      </Layout>
+      <BasicLayout/>
     )
   );
 };
