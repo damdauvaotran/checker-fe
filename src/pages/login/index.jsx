@@ -97,6 +97,7 @@ class Login extends React.Component {
       </div>
     );
   }
+
 }
 
 const WrappedNormalLoginForm = Form.create({name: "normal_login"})(Login);

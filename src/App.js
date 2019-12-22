@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link, withRouter
 } from "react-router-dom";
 import logo from './logo.svg';
 import './App.scss';
@@ -12,6 +12,7 @@ import {directive} from '@babel/types';
 import Layout from './shared-component/Layout'
 import Login from './pages/login';
 import Register from './pages/register';
+import Dashboard from './pages/dashboard'
 import i18n from "i18next";
 import {withTranslation, useTranslation, initReactI18next} from "react-i18next";
 import translationVI from './locales/vi.json';
@@ -37,7 +38,7 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/'>
-            <Login/>
+            <Dashboard/>
           </Route>
           <Route path='/login'>
             <Login/>
