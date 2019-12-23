@@ -5,19 +5,22 @@ import {
   Route,
   Link, withRouter, Redirect
 } from "react-router-dom";
+import i18n from "i18next";
+import {withTranslation, useTranslation, initReactI18next} from "react-i18next";
+
 import logo from './logo.svg';
 import './App.scss';
 import "antd/dist/antd.css";
-import {directive} from '@babel/types';
-import Layout from './shared-component/Layout'
+
+import {isLogin} from './utils/auth'
 import Login from './pages/login';
 import Register from './pages/register';
 import Dashboard from './pages/dashboard'
 import ExamRegister from "./pages/examRegister";
-import i18n from "i18next";
-import {withTranslation, useTranslation, initReactI18next} from "react-i18next";
+
 import translationVI from './locales/vi.json';
-import {isLogin} from './utils/auth'
+
+import SubjectManager from './pages/admin/subject'
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -43,15 +46,15 @@ function App() {
             {
               requireAuth(<ExamRegister/>)
             }
-            Chán đ muốn code nũa
           </Route>
           <Route path='/login'>
             <Login/>
           </Route>
-          <Route path='/about'>
-            About
+          <Route path='/admin/subject'>
+            {
+              requireAuth(<SubjectManager/>)
+            }
           </Route>
-
           <Route path='/register'>
             <Register/>
           </Route>

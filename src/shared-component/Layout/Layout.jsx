@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Switch, Route, Link, Redirect} from "react-rout
 import {Layout, Menu, Breadcrumb, Icon, Button} from 'antd';
 import './layout.scss'
 
-import {getUserData , clearUserToken} from '../utils/auth'
+import {getUserData , clearUserToken} from '../../utils/auth'
 
 const {SubMenu} = Menu;
 
@@ -11,7 +11,7 @@ const {SubMenu} = Menu;
 const {Header, Content, Footer, Sider} = Layout;
 
 
-export const withLayout = (WrappedComponent) => {
+export const withLayout =(seletedKey)=> (WrappedComponent) => {
 
   class BasicLayout extends React.Component {
 
@@ -44,7 +44,7 @@ export const withLayout = (WrappedComponent) => {
           <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} theme='light'>
             <div className="logo">Checker</div>
             <Menu
-              defaultSelectedKeys={['1']}
+              defaultSelectedKeys={[seletedKey]}
               style={{lineHeight: '64px'}}
               mode="inline"
             >
@@ -66,7 +66,10 @@ export const withLayout = (WrappedComponent) => {
                   Admin
                 </span>
               }>
-                <Menu.Item key="2"><Link to=''>About</Link></Menu.Item>
+                <Menu.Item key="admin1"><Link to='/admin/subject'>Quản lý môn thi</Link></Menu.Item>
+                <Menu.Item key="admin2"><Link to='/admin/room'>Quản lý phòng thi</Link></Menu.Item>
+                <Menu.Item key="admin3"><Link to='/admin/student'>Quản lý học sinh</Link></Menu.Item>
+                <Menu.Item key="admin4"><Link to='/admin/shift'>Quản lý ca thi</Link></Menu.Item>
               </SubMenu>
             </Menu>
           </Sider>

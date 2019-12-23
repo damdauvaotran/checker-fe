@@ -1,5 +1,5 @@
 import React from 'react';
-import {withLayout} from '../../shared-component/Layout'
+import {withLayout} from '../../shared-component/Layout/Layout'
 import ExamRegister  from "../examRegister";
 
 class Dashboard extends React.Component{

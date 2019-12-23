@@ -1,7 +1,7 @@
 import React from "react";
 import {Form, Icon, Input, Button, Checkbox, Row, Col} from 'antd';
 
-import {withLayout} from '../../shared-component/Layout'
+import {withLayout} from '../../shared-component/Layout/Layout'
 import {studentGetAllowedSubject} from '../../api/student/subject'
 
 class ExamRegister extends React.Component {
@@ -71,4 +71,4 @@ class ExamRegister extends React.Component {
   }
 }
 
-export default withLayout(Form.create({name: 'exmaRegistee'})(ExamRegister))
+export default withLayout('1')(Form.create({name: 'exmaRegistee'})(ExamRegister))

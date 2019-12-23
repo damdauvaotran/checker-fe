@@ -1,5 +1,5 @@
 import React from "react";
-import withLayout from "../../shared-component/Layout";
+import withLayout from "../../shared-component/Layout/Layout";
 import {login, register} from '../../api/auth'
 import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
