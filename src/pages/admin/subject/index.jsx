@@ -55,7 +55,6 @@ class SubjectManager extends React.Component {
       isEditModalVisible: true,
       selectedSubject: selectedSubject
     })
-    console.log('selected', selectedSubject)
   }
 
   handleCreateSubject = () => {
@@ -65,6 +64,7 @@ class SubjectManager extends React.Component {
         const res = await createSubject(values.createdSubjectName, parseInt(values.createdSubjectCredit, 10))
         if (res.success) {
           message.success('Thêm thành công');
+          this.handleCloseCreateModal();
           await this.fetchSubject();
         } else {
           message.error(res.message)
@@ -74,9 +74,17 @@ class SubjectManager extends React.Component {
   };
 
   handleEditSubject = () => {
-    this.props.form.validateFields(['updatedSubjectName', 'updatedSubjectCredit'], (errors, values) => {
+    this.props.form.validateFields(['updatedSubjectName', 'updatedSubjectCredit'], async (errors, values) => {
       if (!errors) {
-        console.log(values)
+        const {subjectId} = this.state.selectedSubject;
+        const res = await updateSubject(subjectId, values.updatedSubjectName, parseInt(values.updatedSubjectCredit, 10))
+        if (res.success) {
+          message.success('Sửa thành công');
+          this.handleCloseEditModal();
+          await this.fetchSubject();
+        } else {
+          message.error(res.message)
+        }
       }
     })
   };
@@ -89,7 +97,8 @@ class SubjectManager extends React.Component {
 
   handleCloseEditModal = () => {
     this.setState({
-      isEditModalVisible: false
+      isEditModalVisible: false,
+      selectedSubject: {}
     })
   }
 
