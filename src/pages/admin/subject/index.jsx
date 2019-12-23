@@ -1,7 +1,7 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
 import {getAllSubject, createSubject, updateSubject, deleteSubject} from '../../../api/admin/subject'
-import {Table, Divider, Button, Row, Modal, Col, Input, Form, message} from 'antd'
+import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message} from 'antd'
 
 class SubjectManager extends React.Component {
   state = {
@@ -40,12 +40,33 @@ class SubjectManager extends React.Component {
         <span>
         <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
         <Divider type="vertical"/>
-        <Button type='danger' icon='delete'>Xóa</Button>
+         <Popconfirm
+           title="Bạn có thật sự muốn xóa"
+           onConfirm={() => this.handleDeleteSubject(record)}
+           okText="Yes"
+           cancelText="No"
+         >
+     <Button type='danger' icon='delete'>Xóa</Button>
+      </Popconfirm>,
+
       </span>
       ),
     },
 
   ];
+
+
+  handleDeleteSubject = async (subject) => {
+    const {subjectId} = subject;
+    const res = await deleteSubject(subjectId)
+    if (res.success) {
+      message.success('Xóa thành công')
+      await this.fetchSubject();
+    } else {
+      message.error(res.message)
+    }
+
+  }
 
   handleOpenCreateModal = () => {
     this.setState({isCreateModalVisible: true})
@@ -103,7 +124,7 @@ class SubjectManager extends React.Component {
   }
 
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     await this.fetchSubject()
   }
 

@@ -23,7 +23,7 @@ export const updateSubject = (id, name, credit) => putAuthRequest({
   }
 });
 
-export const deleteSubject = (id, name, credit) => deleteAuthRequest({
+export const deleteSubject = (id) => deleteAuthRequest({
   url: `/admin/subject/${id}`,
 });
 
