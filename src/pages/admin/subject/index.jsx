@@ -1,6 +1,6 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllSubject, createSubject, updateSubject, deleteSubject} from '../../../api/admin/subject'
+import {getAllSubject, createSubject, updateSubject, deleteSubject, importSubject} from '../../../api/admin/subject'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
 class SubjectManager extends React.Component {
@@ -10,7 +10,9 @@ class SubjectManager extends React.Component {
     isEditModalVisible: false,
     createdSubject: {},
     updatedSubject: {},
-    selectedSubject: {}
+    selectedSubject: {},
+    file: null,
+    fileList: []
   };
 
   fetchSubject = async () => {
@@ -46,7 +48,6 @@ class SubjectManager extends React.Component {
          >
      <Button type='danger' icon='delete'>Xóa</Button>
       </Popconfirm>,
-
       </span>
       ),
     },
@@ -128,18 +129,44 @@ class SubjectManager extends React.Component {
 
 
   handleUploadFile = (info) => {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
+    // if (info.file.status !== 'uploading') {
+    //   console.log(info.file, info.fileList);
+    // }
+    // if (info.file.status === 'done') {
+    //   message.success(`${info.file.name} file uploaded successfully`);
+    // } else if (info.file.status === 'error') {
+    //   message.error(`${info.file.name} file upload failed.`);
+    // }
+
+    let fileList = [...info.fileList];
+    // 1. Limit the number of uploaded files
+    // Only to show one recent uploaded files, and old ones will be replaced by the new
+    fileList = fileList.slice(-1);
+
+    // 2. Read from response and show file link
+
+    this.setState({fileList});
   }
 
-  uploadFile = (options) => {
+  uploadFile = async (options) => {
+    const {onSuccess, onError, file, onProgress} = options;
+    console.log('options', options)
+    const fmData = new FormData();
+    fmData.append('subjects', file)
+    try {
+      const res = await importSubject(fmData)
+      onSuccess("Ok");
+      if (res.success) {
+        message.success('Import thành công')
+        await this.fetchSubject()
+      } else {
+        message.error(JSON.stringify(res.message))
+      }
 
+    } catch (e) {
+      console.error(e)
+      onError({err: e})
+    }
   }
 
   render() {
@@ -155,14 +182,15 @@ class SubjectManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {subjectList, isCreateModalVisible, isEditModalVisible, selectedSubject} = this.state
+    const {subjectList, isCreateModalVisible, isEditModalVisible, selectedSubject, fileList} = this.state
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
-          <Upload onChange={this.handleUploadFile} customRequest={this.uploadFile}>
+          <Upload onChange={this.handleUploadFile} customRequest={this.uploadFile} fileList={fileList}>
             <Button type='primary' icon='file-excel'>Import </Button>
           </Upload>
-          <Button type='primary' icon='file-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
+          <Divider type='vertical'/>
+          <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
           <Table dataSource={subjectList} columns={this.columns} rowKey={(record) => record.subjectId}/>;
