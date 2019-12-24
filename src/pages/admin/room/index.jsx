@@ -1,37 +1,37 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllSubject, createSubject, updateSubject, deleteSubject, importSubject} from '../../../api/admin/subject'
+import {getAllRoom, createRoom, updateRoom, deleteRoom, importRoom} from '../../../api/admin/room'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
-class SubjectManager extends React.Component {
+class RoomManager extends React.Component {
   state = {
-    subjectList: [],
+    roomList: [],
     isCreateModalVisible: false,
     isEditModalVisible: false,
-    createdSubject: {},
-    updatedSubject: {},
-    selectedSubject: {},
+    createdRoom: {},
+    updatedRoom: {},
+    selectedRoom: {},
     file: null,
     fileList: []
   };
 
-  fetchSubject = async () => {
-    const res = await getAllSubject()
+  fetchRoom = async () => {
+    const res = await getAllRoom()
     this.setState({
-      subjectList: res.data.subjectList,
+      roomList: res.data.roomList,
     })
   };
 
   columns = [
     {
-      title: 'Tên môn',
-      dataIndex: 'subjectName',
-      key: 'subjectName',
+      title: 'Tên phòng',
+      dataIndex: 'roomName',
+      key: 'roomName',
     },
     {
-      title: 'Số tín chỉ',
-      dataIndex: 'subjectCredit',
-      key: 'subjectCredit',
+      title: 'Số chỗ ngồi',
+      dataIndex: 'totalSlot',
+      key: 'totalSlot',
     },
     {
       title: 'Hành động',
@@ -42,7 +42,7 @@ class SubjectManager extends React.Component {
         <Divider type="vertical"/>
          <Popconfirm
            title="Bạn có thật sự muốn xóa"
-           onConfirm={() => this.handleDeleteSubject(record)}
+           onConfirm={() => this.handleDeleteRoom(record)}
            okText="Yes"
            cancelText="No"
          >
@@ -55,12 +55,12 @@ class SubjectManager extends React.Component {
   ];
 
 
-  handleDeleteSubject = async (subject) => {
-    const {subjectId} = subject;
-    const res = await deleteSubject(subjectId)
+  handleDeleteRoom = async (room) => {
+    const {roomId} = room;
+    const res = await deleteRoom(roomId)
     if (res.success) {
       message.success('Xóa thành công')
-      await this.fetchSubject();
+      await this.fetchRoom();
     } else {
       message.error(res.message)
     }
@@ -70,21 +70,21 @@ class SubjectManager extends React.Component {
   handleOpenCreateModal = () => {
     this.setState({isCreateModalVisible: true})
   }
-  handleOpenEditModal = (selectedSubject) => {
+  handleOpenEditModal = (selectedRoom) => {
     this.setState({
       isEditModalVisible: true,
-      selectedSubject: selectedSubject
+      selectedRoom: selectedRoom
     })
   }
 
-  handleCreateSubject = () => {
-    this.props.form.validateFields(['createdSubjectName', 'createdSubjectCredit'], async (errors, values) => {
+  handleCreateRoom = () => {
+    this.props.form.validateFields(['createdRoomName', 'createdRoomCredit'], async (errors, values) => {
       if (!errors) {
-        const res = await createSubject(values.createdSubjectName, parseInt(values.createdSubjectCredit, 10))
+        const res = await createRoom(values.createdRoomName, parseInt(values.createdRoomCredit, 10))
         if (res.success) {
           message.success('Thêm thành công');
           this.handleCloseCreateModal();
-          await this.fetchSubject();
+          await this.fetchRoom();
         } else {
           message.error(res.message)
         }
@@ -92,15 +92,15 @@ class SubjectManager extends React.Component {
     })
   };
 
-  handleEditSubject = () => {
-    this.props.form.validateFields(['updatedSubjectName', 'updatedSubjectCredit'], async (errors, values) => {
+  handleEditRoom = () => {
+    this.props.form.validateFields(['updatedRoomName', 'updatedRoomCredit'], async (errors, values) => {
       if (!errors) {
-        const {subjectId} = this.state.selectedSubject;
-        const res = await updateSubject(subjectId, values.updatedSubjectName, parseInt(values.updatedSubjectCredit, 10))
+        const {roomId} = this.state.selectedRoom;
+        const res = await updateRoom(roomId, values.updatedRoomName, parseInt(values.updatedRoomCredit, 10))
         if (res.success) {
           message.success('Sửa thành công');
           this.handleCloseEditModal();
-          await this.fetchSubject();
+          await this.fetchRoom();
         } else {
           message.error(res.message)
         }
@@ -117,13 +117,13 @@ class SubjectManager extends React.Component {
   handleCloseEditModal = () => {
     this.setState({
       isEditModalVisible: false,
-      selectedSubject: {}
+      selectedRoom: {}
     })
   }
 
 
   componentDidMount = async () => {
-    await this.fetchSubject()
+    await this.fetchRoom()
   }
 
 
@@ -150,13 +150,13 @@ class SubjectManager extends React.Component {
   uploadFile = async (options) => {
     const {onSuccess, onError, file, onProgress} = options;
     const fmData = new FormData();
-    fmData.append('subjects', file)
+    fmData.append('rooms', file)
     try {
-      const res = await importSubject(fmData)
+      const res = await importRoom(fmData)
       onSuccess("Ok");
       if (res.success) {
         message.success('Import thành công')
-        await this.fetchSubject()
+        await this.fetchRoom()
       } else {
         message.error(JSON.stringify(res.message))
       }
@@ -168,6 +168,7 @@ class SubjectManager extends React.Component {
   }
 
   render() {
+    console.log('room', this.state.roomList)
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -179,7 +180,7 @@ class SubjectManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {subjectList, isCreateModalVisible, isEditModalVisible, selectedSubject, fileList} = this.state
+    const {roomList, isCreateModalVisible, isEditModalVisible, selectedRoom, fileList} = this.state
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
@@ -190,31 +191,31 @@ class SubjectManager extends React.Component {
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
-          <Table dataSource={subjectList} columns={this.columns} rowKey={(record) => record.subjectId}/>;
+          <Table dataSource={roomList} columns={this.columns} rowKey={(record) => record.roomId}/>;
         </Row>
         <Modal
-          title="Thêm môn"
+          title="Thêm phòng"
           visible={isCreateModalVisible}
-          onOk={this.handleCreateSubject}
+          onOk={this.handleCreateRoom}
           onCancel={this.handleCloseCreateModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên môn" hasFeedback>
-              {getFieldDecorator('createdSubjectName', {
+            <Form.Item label="Tên phòng" hasFeedback>
+              {getFieldDecorator('createdRoomName', {
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập tên môn',
+                    message: 'Hãy nhập tên phòng',
                   },
                 ],
               })(<Input></Input>)}
             </Form.Item>
-            <Form.Item label="Số tín chỉ" hasFeedback>
-              {getFieldDecorator('createdSubjectCredit', {
+            <Form.Item label="Số chỗ ngồi" hasFeedback>
+              {getFieldDecorator('createdRoomCredit', {
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập số tín chỉ',
+                    message: 'Hãy nhập số chỗ ngồi',
                   },
                 ],
               })(<Input></Input>)}
@@ -224,28 +225,28 @@ class SubjectManager extends React.Component {
         <Modal
           title="Sửa"
           visible={isEditModalVisible}
-          onOk={this.handleEditSubject}
+          onOk={this.handleEditRoom}
           onCancel={this.handleCloseEditModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên môn" hasFeedback>
-              {getFieldDecorator('updatedSubjectName', {
-                initialValue: selectedSubject && selectedSubject.subjectName,
+            <Form.Item label="Tên phòng" hasFeedback>
+              {getFieldDecorator('updatedRoomName', {
+                initialValue: selectedRoom && selectedRoom.roomName,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập tên môn',
+                    message: 'Hãy nhập tên phòng',
                   },
                 ],
               })(<Input></Input>)}
             </Form.Item>
-            <Form.Item label="Số tín chỉ" hasFeedback>
-              {getFieldDecorator('updatedSubjectCredit', {
-                initialValue: selectedSubject && selectedSubject.subjectCredit,
+            <Form.Item label="Số chỗ ngồi" hasFeedback>
+              {getFieldDecorator('updatedRoomCredit', {
+                initialValue: selectedRoom && selectedRoom.roomCredit,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập số tín chỉ',
+                    message: 'Hãy nhập số chỗ ngồi',
                   },
                 ],
               })(<Input></Input>)}
@@ -257,5 +258,5 @@ class SubjectManager extends React.Component {
   }
 }
 
-export default withLayout('admin1')(Form.create({name: 'register'})(SubjectManager))
+export default withLayout('admin1')(Form.create({name: 'register'})(RoomManager))
 

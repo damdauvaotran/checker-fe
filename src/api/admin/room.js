@@ -1,6 +1,6 @@
 import {deleteAuthRequest, getAuthRequest, postAuthRequest, putAuthRequest} from '../common'
 
-export const getRoom = () => getAuthRequest({
+export const getAllRoom = () => getAuthRequest({
   url: '/admin/rooms'
 });
 

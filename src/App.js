@@ -13,14 +13,14 @@ import './App.scss';
 import "antd/dist/antd.css";
 
 import {isLogin} from './utils/auth'
+import translationVI from './locales/vi.json';
+
 import Login from './pages/login';
 import Register from './pages/register';
 import Dashboard from './pages/dashboard'
 import ExamRegister from "./pages/examRegister";
-
-import translationVI from './locales/vi.json';
-
 import SubjectManager from './pages/admin/subject'
+import RoomManager from './pages/admin/room'
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -51,6 +51,21 @@ function App() {
             <Login/>
           </Route>
           <Route path='/admin/subject'>
+            {
+              requireAuth(<SubjectManager/>)
+            }
+          </Route>
+          <Route path='/admin/room'>
+            {
+              requireAuth(<RoomManager/>)
+            }
+          </Route>
+          <Route path='/admin/shift'>
+            {
+              requireAuth(<SubjectManager/>)
+            }
+          </Route>
+          <Route path='/admin/student'>
             {
               requireAuth(<SubjectManager/>)
             }
