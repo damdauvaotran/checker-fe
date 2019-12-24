@@ -87,22 +87,23 @@ class Login extends React.Component {
                 />
               )}
             </Form.Item>
-            <Form.Item>
-              {getFieldDecorator("remember", {
-                valuePropName: "checked",
-                initialValue: true
-              })(<Checkbox>Remember me</Checkbox>)}
-              {/*<a className="login-form-forgot" href="">*/}
-              {/*  Forgot password*/}
-              {/*</a>*/}
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-              >
-                {t('page.login.button.login')}
-              </Button>
-            </Form.Item>
+            {/*<Form.Item>*/}
+            {/*  {getFieldDecorator("remember", {*/}
+            {/*    valuePropName: "checked",*/}
+            {/*    initialValue: true*/}
+            {/*  })(<Checkbox>Remember me</Checkbox>)}*/}
+            {/*  <a className="login-form-forgot" href="">*/}
+            {/*    Forgot password*/}
+            {/*  </a>*/}
+
+            {/*</Form.Item>*/}
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
+              {t('page.login.button.login')}
+            </Button>
           </Form>
         </Card>
       </div>

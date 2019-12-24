@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Switch, Route, Link, Redirect} from "react-rout
 import {Layout, Menu, Breadcrumb, Icon, Button} from 'antd';
 import './layout.scss'
 
-import {getUserData , clearUserToken} from '../../utils/auth'
+import {getUserData, clearUserToken} from '../../utils/auth'
 
 const {SubMenu} = Menu;
 
@@ -11,7 +11,7 @@ const {SubMenu} = Menu;
 const {Header, Content, Footer, Sider} = Layout;
 
 
-export const withLayout =(seletedKey)=> (WrappedComponent) => {
+export const withLayout = (seletedKey) => (WrappedComponent) => {
 
   class BasicLayout extends React.Component {
 
@@ -25,7 +25,7 @@ export const withLayout =(seletedKey)=> (WrappedComponent) => {
       this.setState({collapsed});
     };
 
-    onLogOut = ()=>{
+    onLogOut = () => {
       clearUserToken()
       this.setState({
         isLogOut: true
@@ -33,12 +33,12 @@ export const withLayout =(seletedKey)=> (WrappedComponent) => {
     }
 
     render() {
-      if (this.state.isLogOut){
+      if (this.state.isLogOut) {
         return (
           <Redirect to='/login'></Redirect>
         )
       }
-      getUserData()
+      const data = getUserData()
       return (
         <Layout style={{minHeight: '100vh'}}>
           <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} theme='light'>
@@ -46,6 +46,7 @@ export const withLayout =(seletedKey)=> (WrappedComponent) => {
             <Menu
               defaultSelectedKeys={[seletedKey]}
               style={{lineHeight: '64px'}}
+              defaultOpenKeys={['admin']}
               mode="inline"
             >
               <Menu.Item key="1">
@@ -60,17 +61,20 @@ export const withLayout =(seletedKey)=> (WrappedComponent) => {
                   Xem kết quả
                 </span>
               </Menu.Item>
-              <SubMenu title={
-                <span className="submenu-title-wrapper">
+              {
+                data.r === 2 && <SubMenu title={
+                  <span className="submenu-title-wrapper">
                   <Icon type="team"/>
                   Admin
                 </span>
-              }>
-                <Menu.Item key="admin1"><Link to='/admin/subject'>Quản lý môn thi</Link></Menu.Item>
-                <Menu.Item key="admin2"><Link to='/admin/room'>Quản lý phòng thi</Link></Menu.Item>
-                <Menu.Item key="admin3"><Link to='/admin/student'>Quản lý học sinh</Link></Menu.Item>
-                <Menu.Item key="admin4"><Link to='/admin/shift'>Quản lý ca thi</Link></Menu.Item>
-              </SubMenu>
+                } key='admin'>
+                  <Menu.Item key="admin1"><Link to='/admin/subject'>Quản lý môn thi</Link></Menu.Item>
+                  <Menu.Item key="admin2"><Link to='/admin/room'>Quản lý phòng thi</Link></Menu.Item>
+                  <Menu.Item key="admin3"><Link to='/admin/student'>Quản lý học sinh</Link></Menu.Item>
+                  <Menu.Item key="admin4"><Link to='/admin/shift'>Quản lý ca thi</Link></Menu.Item>
+                </SubMenu>
+              }
+
             </Menu>
           </Sider>
 

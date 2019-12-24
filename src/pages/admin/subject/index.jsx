@@ -1,7 +1,7 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
 import {getAllSubject, createSubject, updateSubject, deleteSubject} from '../../../api/admin/subject'
-import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message} from 'antd'
+import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
 class SubjectManager extends React.Component {
   state = {
@@ -20,8 +20,6 @@ class SubjectManager extends React.Component {
     })
   };
 
-  onCreateSubject = () => {
-  };
   columns = [
     {
       title: 'Tên môn',
@@ -129,6 +127,21 @@ class SubjectManager extends React.Component {
   }
 
 
+  handleUploadFile = (info) => {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+
+  uploadFile = (options) => {
+
+  }
+
   render() {
     console.log(this.state.subjectList)
     const {getFieldDecorator} = this.props.form;
@@ -146,6 +159,9 @@ class SubjectManager extends React.Component {
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <Upload onChange={this.handleUploadFile} customRequest={this.uploadFile}>
+            <Button type='primary' icon='file-excel'>Import </Button>
+          </Upload>
           <Button type='primary' icon='file-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>

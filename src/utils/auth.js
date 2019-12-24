@@ -20,5 +20,5 @@ export const isLogin = () => {
 export const getUserData = () => {
   const token = getUserToken();
   const data = jwt.decode(token);
-  console.log(data)
+  return data
 }

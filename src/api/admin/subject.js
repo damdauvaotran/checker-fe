@@ -27,6 +27,15 @@ export const deleteSubject = (id) => deleteAuthRequest({
   url: `/admin/subject/${id}`,
 });
 
+export const importSubject = (file) => postAuthRequest({
+  url: `/admin/subjects/import`,
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  },
+  data: file
+})
+
+
 
 
 
