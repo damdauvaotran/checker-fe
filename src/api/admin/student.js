@@ -32,9 +32,14 @@ export const deleteStudent = (id, name, credit) => deleteAuthRequest({
   url: `/admin/student/${id}`,
 });
 
-export const importStudent = (id, name, credit) => deleteAuthRequest({
-  url: `/admin/student/${id}`,
-});
+
+export const importStudent = (file) => postAuthRequest({
+  url: `/admin/students/import`,
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  },
+  data: file
+})
 
 
 

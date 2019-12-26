@@ -56,8 +56,8 @@ class StudentManager extends React.Component {
 
 
   handleDeleteStudent = async (student) => {
-    const {studentId} = student;
-    const res = await deleteStudent(studentId)
+    const {userId} = student;
+    const res = await deleteStudent(userId)
     if (res.success) {
       message.success('Xóa thành công')
       await this.fetchStudent();
@@ -200,22 +200,22 @@ class StudentManager extends React.Component {
           onCancel={this.handleCloseCreateModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên phòng" hasFeedback>
+            <Form.Item label="Tên" hasFeedback>
               {getFieldDecorator('createdStudentName', {
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập tên phòng',
+                    message: 'Hãy nhập tên',
                   },
                 ],
               })(<Input></Input>)}
             </Form.Item>
-            <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('createdStudentCredit', {
+            <Form.Item label="MSSV" hasFeedback>
+              {getFieldDecorator('createdStudentMSSV', {
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập số chỗ ngồi',
+                    message: 'Hãy nhập MSSV',
                   },
                 ],
               })(<Input></Input>)}
@@ -229,9 +229,9 @@ class StudentManager extends React.Component {
           onCancel={this.handleCloseEditModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên phòng" hasFeedback>
+            <Form.Item label="Tên" hasFeedback>
               {getFieldDecorator('updatedStudentName', {
-                initialValue: selectedStudent && selectedStudent.studentName,
+                initialValue: selectedStudent && selectedStudent.name,
                 rules: [
                   {
                     required: true,
@@ -240,9 +240,9 @@ class StudentManager extends React.Component {
                 ],
               })(<Input></Input>)}
             </Form.Item>
-            <Form.Item label="Số chỗ ngồi" hasFeedback>
+            <Form.Item label="MSSV" hasFeedback>
               {getFieldDecorator('updatedStudentCredit', {
-                initialValue: selectedStudent && selectedStudent.studentCredit,
+                initialValue: selectedStudent && selectedStudent.mssv,
                 rules: [
                   {
                     required: true,

@@ -78,9 +78,9 @@ class RoomManager extends React.Component {
   }
 
   handleCreateRoom = () => {
-    this.props.form.validateFields(['createdRoomName', 'createdRoomCredit'], async (errors, values) => {
+    this.props.form.validateFields(['createdRoomName', 'createdRoomSlot'], async (errors, values) => {
       if (!errors) {
-        const res = await createRoom(values.createdRoomName, parseInt(values.createdRoomCredit, 10))
+        const res = await createRoom(values.createdRoomName, parseInt(values.createdRoomSlot, 10))
         if (res.success) {
           message.success('Thêm thành công');
           this.handleCloseCreateModal();
@@ -93,10 +93,10 @@ class RoomManager extends React.Component {
   };
 
   handleEditRoom = () => {
-    this.props.form.validateFields(['updatedRoomName', 'updatedRoomCredit'], async (errors, values) => {
+    this.props.form.validateFields(['updatedRoomName', 'updatedRoomSlot'], async (errors, values) => {
       if (!errors) {
         const {roomId} = this.state.selectedRoom;
-        const res = await updateRoom(roomId, values.updatedRoomName, parseInt(values.updatedRoomCredit, 10))
+        const res = await updateRoom(roomId, values.updatedRoomName, parseInt(values.updatedRoomSlot, 10))
         if (res.success) {
           message.success('Sửa thành công');
           this.handleCloseEditModal();
@@ -211,7 +211,7 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('createdRoomCredit', {
+              {getFieldDecorator('createdRoomSlot', {
                 rules: [
                   {
                     required: true,
@@ -241,8 +241,8 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('updatedRoomCredit', {
-                initialValue: selectedRoom && selectedRoom.roomCredit,
+              {getFieldDecorator('updatedRoomSlot', {
+                initialValue: selectedRoom && selectedRoom.totalSlot,
                 rules: [
                   {
                     required: true,

@@ -1,7 +1,25 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
 import {getAllShift, createShift, updateShift, deleteShift, importShift} from '../../../api/admin/shift'
-import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
+import {
+  Table,
+  Divider,
+  Button,
+  Row,
+  Modal,
+  Col,
+  Input,
+  Form,
+  Popconfirm,
+  message,
+  Upload,
+  Select,
+  DatePicker, TimePicker
+} from 'antd'
+import {getAllSubject} from "../../../api/admin/subject";
+import {getAllRoom} from "../../../api/admin/room";
+
+const {Option} = Select;
 
 class ShiftManager extends React.Component {
   state = {
@@ -12,7 +30,9 @@ class ShiftManager extends React.Component {
     updatedShift: {},
     selectedShift: {},
     file: null,
-    fileList: []
+    fileList: [],
+    roomList: [],
+    subjectList: [],
   };
 
   fetchShift = async () => {
@@ -22,16 +42,50 @@ class ShiftManager extends React.Component {
     })
   };
 
+  fetchSubject = async () => {
+    const res = await getAllSubject()
+    this.setState({
+      subjectList: res.data.subjectList,
+    })
+  }
+
+  fetchRoom = async () => {
+    const res = await getAllRoom()
+    this.setState({
+      roomList: res.data.roomList,
+    })
+  }
+
   columns = [
     {
-      title: 'Tên phòng',
-      dataIndex: 'shiftName',
-      key: 'shiftName',
+      title: 'Phòng',
+      dataIndex: 'room.roomName',
+      key: 'roomName',
     },
     {
-      title: 'Số chỗ ngồi',
-      dataIndex: 'totalSlot',
-      key: 'totalSlot',
+      title: 'Phòng',
+      dataIndex: 'subject.subjectName',
+      key: 'subjectName',
+    },
+    {
+      title: 'Ngày',
+      dataIndex: 'examDate',
+      key: 'examDate',
+    },
+    {
+      title: 'Bắt đầu',
+      dataIndex: 'from',
+      key: 'from',
+    },
+    {
+      title: 'Chỗ',
+      key: 'slot',
+      render: (text, record, index) => {
+        return <div>
+          {/*{JSON.stringify(record)}*/}
+          {record.room.totalSlot}
+        </div>
+      }
     },
     {
       title: 'Hành động',
@@ -56,10 +110,10 @@ class ShiftManager extends React.Component {
 
 
   handleDeleteShift = async (shift) => {
-    const {shiftId} = shift;
-    const res = await deleteShift(shiftId)
+    const {examShiftId} = shift;
+    const res = await deleteShift(examShiftId);
     if (res.success) {
-      message.success('Xóa thành công')
+      message.success('Xóa thành công');
       await this.fetchShift();
     } else {
       message.error(res.message)
@@ -78,17 +132,19 @@ class ShiftManager extends React.Component {
   }
 
   handleCreateShift = () => {
-    this.props.form.validateFields(['createdShiftName', 'createdShiftCredit'], async (errors, values) => {
+    this.props.form.validateFields(async (errors, values) => {
       if (!errors) {
-        const res = await createShift(values.createdShiftName, parseInt(values.createdShiftCredit, 10))
-        if (res.success) {
-          message.success('Thêm thành công');
-          this.handleCloseCreateModal();
-          await this.fetchShift();
-        } else {
-          message.error(res.message)
-        }
+        console.log('values', values)
+        // const res = await createShift(values.createdShiftName, parseInt(values.createdShiftCredit, 10))
+        // if (res.success) {
+        //   message.success('Thêm thành công');
+        //   this.handleCloseCreateModal();
+        //   await this.fetchShift();
+        // } else {
+        //   message.error(res.message)
+        // }
       }
+      console.log(errors)
     })
   };
 
@@ -122,8 +178,10 @@ class ShiftManager extends React.Component {
   }
 
 
-  componentDidMount = async () => {
-    await this.fetchShift()
+  componentDidMount = () => {
+    this.fetchShift()
+    this.fetchSubject()
+    this.fetchRoom()
   }
 
 
@@ -180,7 +238,7 @@ class ShiftManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {shiftList, isCreateModalVisible, isEditModalVisible, selectedShift, fileList} = this.state
+    const {shiftList, isCreateModalVisible, isEditModalVisible, selectedShift, fileList, roomList, subjectList} = this.state
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
@@ -191,34 +249,68 @@ class ShiftManager extends React.Component {
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
-          <Table dataSource={shiftList} columns={this.columns} rowKey={(record) => record.shiftId}/>;
+          <Table dataSource={shiftList} columns={this.columns} rowKey={(record) => record.examShiftId}/>;
         </Row>
         <Modal
-          title="Thêm phòng"
+          title="Thêm ca"
           visible={isCreateModalVisible}
           onOk={this.handleCreateShift}
           onCancel={this.handleCloseCreateModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên phòng" hasFeedback>
+            <Form.Item label="Phòng" hasFeedback>
               {getFieldDecorator('createdShiftName', {
+                initialValue: selectedShift && selectedShift.shiftName,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập tên phòng',
+                    message: 'Hãy nhập tên ca',
                   },
                 ],
-              })(<Input></Input>)}
+              })(
+                <Select style={{width: '100%'}}>
+                  {
+                    roomList.map(room => <Option key={room.roomId} value={room.roomId}>{room.roomName}</Option>)
+                  }
+                </Select>)}
             </Form.Item>
-            <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('createdShiftCredit', {
+            <Form.Item label="Môn" hasFeedback>
+              {getFieldDecorator('createdShiftName', {
+                initialValue: selectedShift && selectedShift.shiftName,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập số chỗ ngồi',
+                    message: 'Hãy nhập tên ca',
                   },
                 ],
-              })(<Input></Input>)}
+              })(
+                <Select style={{width: '100%'}}>
+                  {
+                    subjectList.map(subject => <Option key={subject.subjectId} value={subject.subjectId}>{subject.subjectName}</Option>)
+                  }
+                </Select>)}
+            </Form.Item>
+            <Form.Item label="Ngày" hasFeedback>
+              {getFieldDecorator('createdShiftDate', {
+                initialValue: selectedShift && selectedShift.shiftName,
+                rules: [
+                  {
+                    required: true,
+                    message: 'Hãy nhập tên ca',
+                  },
+                ],
+              })(<DatePicker/>)}
+            </Form.Item>
+            <Form.Item label="Bắt đầu" hasFeedback>
+              {getFieldDecorator('createdShiftFrom', {
+                initialValue: selectedShift && selectedShift.shiftCredit,
+                rules: [
+                  {
+                    required: true,
+                    message: 'Hãy nhập thời gian bắt đầu',
+                  },
+                ],
+              })(<TimePicker  format={'HH:mm'}/>)}
             </Form.Item>
           </Form>
         </Modal>
@@ -229,27 +321,59 @@ class ShiftManager extends React.Component {
           onCancel={this.handleCloseEditModal}
         >
           <Form  {...formItemLayout}>
-            <Form.Item label="Tên phòng" hasFeedback>
+            <Form.Item label="Phòng" hasFeedback>
               {getFieldDecorator('updatedShiftName', {
                 initialValue: selectedShift && selectedShift.shiftName,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập tên phòng',
+                    message: 'Hãy nhập tên ca',
                   },
                 ],
-              })(<Input></Input>)}
+              })(
+                <Select style={{width: '100%'}}>
+                  {
+                    roomList.map(room => <Option key={room.roomId} value={room.roomId}>{room.roomName}</Option>)
+                  }
+                </Select>)}
             </Form.Item>
-            <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('updatedShiftCredit', {
+            <Form.Item label="Môn" hasFeedback>
+              {getFieldDecorator('updatedShiftName', {
+                initialValue: selectedShift && selectedShift.shiftName,
+                rules: [
+                  {
+                    required: true,
+                    message: 'Hãy nhập tên ca',
+                  },
+                ],
+              })(
+                <Select style={{width: '100%'}}>
+                  {
+                    subjectList.map(subject => <Option key={subject.subjectId} value={subject.subjectId}>{subject.subjectName}</Option>)
+                  }
+                </Select>)}
+            </Form.Item>
+            <Form.Item label="Ngày" hasFeedback>
+              {getFieldDecorator('updatedShiftDate', {
+                initialValue: selectedShift && selectedShift.shiftName,
+                rules: [
+                  {
+                    required: true,
+                    message: 'Hãy nhập tên ca',
+                  },
+                ],
+              })(<DatePicker/>)}
+            </Form.Item>
+            <Form.Item label="Bắt đầu" hasFeedback>
+              {getFieldDecorator('updatedShiftFrom', {
                 initialValue: selectedShift && selectedShift.shiftCredit,
                 rules: [
                   {
                     required: true,
-                    message: 'Hãy nhập số chỗ ngồi',
+                    message: 'Hãy nhập thời gian bắt đầu',
                   },
                 ],
-              })(<Input></Input>)}
+              })(<TimePicker  format={'HH:mm'}/>)}
             </Form.Item>
           </Form>
         </Modal>
