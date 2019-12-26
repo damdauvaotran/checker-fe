@@ -1,4 +1,5 @@
 import React from "react";
+import moment from 'moment'
 import {withLayout} from '../../../shared-component/Layout/Layout'
 import {getAllShift, createShift, updateShift, deleteShift, importShift} from '../../../api/admin/shift'
 import {
@@ -83,7 +84,7 @@ class ShiftManager extends React.Component {
       render: (text, record, index) => {
         return <div>
           {/*{JSON.stringify(record)}*/}
-          {record.room.totalSlot}
+          {record.registered + '/'+  record.room.totalSlot}
         </div>
       }
     },
@@ -124,6 +125,7 @@ class ShiftManager extends React.Component {
   handleOpenCreateModal = () => {
     this.setState({isCreateModalVisible: true})
   }
+
   handleOpenEditModal = (selectedShift) => {
     this.setState({
       isEditModalVisible: true,
@@ -132,33 +134,44 @@ class ShiftManager extends React.Component {
   }
 
   handleCreateShift = () => {
-    this.props.form.validateFields(async (errors, values) => {
+    this.props.form.validateFields(['createdShiftRoom', 'createdShiftSubject', 'createdShiftDate', 'createdShiftFrom'], async (errors, values) => {
       if (!errors) {
-        console.log('values', values)
-        // const res = await createShift(values.createdShiftName, parseInt(values.createdShiftCredit, 10))
-        // if (res.success) {
-        //   message.success('Thêm thành công');
-        //   this.handleCloseCreateModal();
-        //   await this.fetchShift();
-        // } else {
-        //   message.error(res.message)
-        // }
+        try {
+          const {createdShiftRoom, createdShiftSubject, createdShiftDate, createdShiftFrom} = values
+          const formatDate = createdShiftDate.format('DD/MM/YYYY')
+          const formatFrom = createdShiftFrom.format('HH:mm')
+          const res = await createShift(createdShiftRoom, createdShiftSubject, formatDate, formatFrom)
+          if (res.success) {
+            message.success('Thêm thành công');
+            this.handleCloseCreateModal();
+            this.fetchShift()
+          } else {
+            message.error(res.message)
+          }
+        } catch (e) {
+          message.error(e)
+        }
       }
-      console.log(errors)
     })
   };
 
   handleEditShift = () => {
-    this.props.form.validateFields(['updatedShiftName', 'updatedShiftCredit'], async (errors, values) => {
+    this.props.form.validateFields(['updatedShiftRoom', 'updatedShiftSubject', 'updatedShiftDate', 'updatedShiftFrom'], async (errors, values) => {
       if (!errors) {
-        const {shiftId} = this.state.selectedShift;
-        const res = await updateShift(shiftId, values.updatedShiftName, parseInt(values.updatedShiftCredit, 10))
-        if (res.success) {
-          message.success('Sửa thành công');
-          this.handleCloseEditModal();
-          await this.fetchShift();
-        } else {
-          message.error(res.message)
+        try {
+          const {updatedShiftRoom, updatedShiftSubject, updatedShiftDate, updatedShiftFrom} = values
+          const formatDate = updatedShiftDate.format('DD/MM/YYYY')
+          const formatFrom = updatedShiftFrom.format('HH:mm')
+          const res = await createShift(updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
+          if (res.success) {
+            message.success('Thêm thành công')
+            this.handleCloseEditModal()
+            this.fetchShift()
+          } else {
+            message.error(res.message)
+          }
+        } catch (e) {
+          message.error(e)
         }
       }
     })
@@ -242,9 +255,9 @@ class ShiftManager extends React.Component {
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
-          <Upload onChange={this.handleUploadFile} customRequest={this.uploadFile} fileList={fileList}>
-            <Button type='primary' icon='file-excel'>Import </Button>
-          </Upload>
+          {/*<Upload onChange={this.handleUploadFile} customRequest={this.uploadFile} fileList={fileList}>*/}
+          {/*  <Button type='primary' icon='file-excel'>Import </Button>*/}
+          {/*</Upload>*/}
           <Divider type='vertical'/>
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
@@ -259,8 +272,7 @@ class ShiftManager extends React.Component {
         >
           <Form  {...formItemLayout}>
             <Form.Item label="Phòng" hasFeedback>
-              {getFieldDecorator('createdShiftName', {
-                initialValue: selectedShift && selectedShift.shiftName,
+              {getFieldDecorator('createdShiftRoom', {
                 rules: [
                   {
                     required: true,
@@ -275,8 +287,7 @@ class ShiftManager extends React.Component {
                 </Select>)}
             </Form.Item>
             <Form.Item label="Môn" hasFeedback>
-              {getFieldDecorator('createdShiftName', {
-                initialValue: selectedShift && selectedShift.shiftName,
+              {getFieldDecorator('createdShiftSubject', {
                 rules: [
                   {
                     required: true,
@@ -286,13 +297,13 @@ class ShiftManager extends React.Component {
               })(
                 <Select style={{width: '100%'}}>
                   {
-                    subjectList.map(subject => <Option key={subject.subjectId} value={subject.subjectId}>{subject.subjectName}</Option>)
+                    subjectList.map(subject => <Option key={subject.subjectId}
+                                                       value={subject.subjectId}>{subject.subjectName}</Option>)
                   }
                 </Select>)}
             </Form.Item>
             <Form.Item label="Ngày" hasFeedback>
               {getFieldDecorator('createdShiftDate', {
-                initialValue: selectedShift && selectedShift.shiftName,
                 rules: [
                   {
                     required: true,
@@ -303,14 +314,13 @@ class ShiftManager extends React.Component {
             </Form.Item>
             <Form.Item label="Bắt đầu" hasFeedback>
               {getFieldDecorator('createdShiftFrom', {
-                initialValue: selectedShift && selectedShift.shiftCredit,
                 rules: [
                   {
                     required: true,
                     message: 'Hãy nhập thời gian bắt đầu',
                   },
                 ],
-              })(<TimePicker  format={'HH:mm'}/>)}
+              })(<TimePicker format={'HH:mm'}/>)}
             </Form.Item>
           </Form>
         </Modal>
@@ -320,10 +330,11 @@ class ShiftManager extends React.Component {
           onOk={this.handleEditShift}
           onCancel={this.handleCloseEditModal}
         >
+          {/*Update Form*/}
           <Form  {...formItemLayout}>
             <Form.Item label="Phòng" hasFeedback>
-              {getFieldDecorator('updatedShiftName', {
-                initialValue: selectedShift && selectedShift.shiftName,
+              {getFieldDecorator('updatedShiftRoom', {
+                initialValue: selectedShift && selectedShift.room && selectedShift.room.roomId,
                 rules: [
                   {
                     required: true,
@@ -338,8 +349,8 @@ class ShiftManager extends React.Component {
                 </Select>)}
             </Form.Item>
             <Form.Item label="Môn" hasFeedback>
-              {getFieldDecorator('updatedShiftName', {
-                initialValue: selectedShift && selectedShift.shiftName,
+              {getFieldDecorator('updatedShiftSubject', {
+                initialValue: selectedShift && selectedShift.subject && selectedShift.subject.subjectId,
                 rules: [
                   {
                     required: true,
@@ -349,13 +360,14 @@ class ShiftManager extends React.Component {
               })(
                 <Select style={{width: '100%'}}>
                   {
-                    subjectList.map(subject => <Option key={subject.subjectId} value={subject.subjectId}>{subject.subjectName}</Option>)
+                    subjectList.map(subject => <Option key={subject.subjectId}
+                                                       value={subject.subjectId}>{subject.subjectName}</Option>)
                   }
                 </Select>)}
             </Form.Item>
             <Form.Item label="Ngày" hasFeedback>
               {getFieldDecorator('updatedShiftDate', {
-                initialValue: selectedShift && selectedShift.shiftName,
+                initialValue: selectedShift && selectedShift.examDate && moment(selectedShift.examDate , 'DD/MM/YYYY'),
                 rules: [
                   {
                     required: true,
@@ -366,14 +378,14 @@ class ShiftManager extends React.Component {
             </Form.Item>
             <Form.Item label="Bắt đầu" hasFeedback>
               {getFieldDecorator('updatedShiftFrom', {
-                initialValue: selectedShift && selectedShift.shiftCredit,
+                initialValue: selectedShift && selectedShift.from && moment(selectedShift.from , 'HH:mm'),
                 rules: [
                   {
                     required: true,
                     message: 'Hãy nhập thời gian bắt đầu',
                   },
                 ],
-              })(<TimePicker  format={'HH:mm'}/>)}
+              })(<TimePicker format={'HH:mm'}/>)}
             </Form.Item>
           </Form>
         </Modal>

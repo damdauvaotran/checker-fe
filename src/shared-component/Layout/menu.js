@@ -1,0 +1,46 @@
+import {Menu} from "antd";
+import {Link} from "react-router-dom";
+import React from "react";
+
+export default {
+  student: [
+    {
+      url: '/',
+      key: '1',
+      icon: 'team',
+      title: 'Đăng ký thi'
+    },
+    {
+      url: '/',
+      key: '2',
+      icon: 'team',
+      title: 'Xem kết quả'
+    },
+  ],
+  admin: [
+    {
+      url: '/admin/subject',
+      key: 'admin1',
+      icon: 'team',
+      title: 'Quản lý môn thi'
+    },
+    {
+      url: '/admin/room',
+      key: 'admin2',
+      icon: 'team',
+      title: 'Quản lý phòng thi'
+    },
+    {
+      url: '/admin/student',
+      key: 'admin3',
+      icon: 'team',
+      title: 'Quản lý học sinh'
+    },
+    {
+      url: '/admin/shift',
+      key: 'admin4',
+      icon: 'team',
+      title: 'Quản lý ca thi'
+    },
+  ]
+}

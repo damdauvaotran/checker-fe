@@ -16,10 +16,10 @@ export const createShift = (roomId, subjectId, date, from, to) => postAuthReques
   }
 });
 
-export const updateShift = (id, roomId, subjectId, date, from, to) => putAuthRequest({
+export const updateShift = (id, roomId, subjectId, date, from) => putAuthRequest({
   url: `/admin/shift/${id}`,
   data: {
-    roomId, subjectId, date, from, to,
+    roomId, subjectId, date, from,
   }
 });
 

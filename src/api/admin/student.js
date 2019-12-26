@@ -32,7 +32,6 @@ export const deleteStudent = (id, name, credit) => deleteAuthRequest({
   url: `/admin/student/${id}`,
 });
 
-
 export const importStudent = (file) => postAuthRequest({
   url: `/admin/students/import`,
   headers: {

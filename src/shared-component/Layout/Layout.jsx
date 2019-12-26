@@ -4,6 +4,7 @@ import {Layout, Menu, Breadcrumb, Icon, Button} from 'antd';
 import './layout.scss'
 
 import {getUserData, clearUserToken} from '../../utils/auth'
+import menu from './menu'
 
 const {SubMenu} = Menu;
 
@@ -49,18 +50,22 @@ export const withLayout = (seletedKey) => (WrappedComponent) => {
               defaultOpenKeys={['admin']}
               mode="inline"
             >
-              <Menu.Item key="1">
-                 <span className="submenu-title-wrapper">
-                  <Icon type="team"/>
-                  Đăng ký thi
-                </span>
-              </Menu.Item>
-              <Menu.Item key="3">
-                 <span className="submenu-title-wrapper">
-                  <Icon type="team"/>
-                  Xem kết quả
-                </span>
-              </Menu.Item>
+
+              {
+                data.r === 2 && menu.student.map(student => {
+                  return (
+                    <Menu.Item key={student.key}>
+                      <Link to={student.url}>
+                        <span className="submenu-title-wrapper">
+                          <Icon type={student.icon}/>
+                          {student.title}
+                        </span>
+                      </Link>
+                    </Menu.Item>
+                  )
+                })
+              }
+
               {
                 data.r === 2 && <SubMenu title={
                   <span className="submenu-title-wrapper">
@@ -68,10 +73,13 @@ export const withLayout = (seletedKey) => (WrappedComponent) => {
                   Admin
                 </span>
                 } key='admin'>
-                  <Menu.Item key="admin1"><Link to='/admin/subject'>Quản lý môn thi</Link></Menu.Item>
-                  <Menu.Item key="admin2"><Link to='/admin/room'>Quản lý phòng thi</Link></Menu.Item>
-                  <Menu.Item key="admin3"><Link to='/admin/student'>Quản lý học sinh</Link></Menu.Item>
-                  <Menu.Item key="admin4"><Link to='/admin/shift'>Quản lý ca thi</Link></Menu.Item>
+                  {
+                    menu.admin.map(admin => {
+                      return (
+                        <Menu.Item key={admin.key}><Link to={admin.url}>{admin.title}</Link></Menu.Item>
+                      )
+                    })
+                  }
                 </SubMenu>
               }
 
