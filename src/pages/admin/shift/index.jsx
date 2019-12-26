@@ -1,32 +1,32 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllRoom, createRoom, updateRoom, deleteRoom, importRoom} from '../../../api/admin/room'
+import {getAllShift, createShift, updateShift, deleteShift, importShift} from '../../../api/admin/shift'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
-class RoomManager extends React.Component {
+class ShiftManager extends React.Component {
   state = {
-    roomList: [],
+    shiftList: [],
     isCreateModalVisible: false,
     isEditModalVisible: false,
-    createdRoom: {},
-    updatedRoom: {},
-    selectedRoom: {},
+    createdShift: {},
+    updatedShift: {},
+    selectedShift: {},
     file: null,
     fileList: []
   };
 
-  fetchRoom = async () => {
-    const res = await getAllRoom()
+  fetchShift = async () => {
+    const res = await getAllShift()
     this.setState({
-      roomList: res.data.roomList,
+      shiftList: res.data.shiftList,
     })
   };
 
   columns = [
     {
       title: 'Tên phòng',
-      dataIndex: 'roomName',
-      key: 'roomName',
+      dataIndex: 'shiftName',
+      key: 'shiftName',
     },
     {
       title: 'Số chỗ ngồi',
@@ -42,7 +42,7 @@ class RoomManager extends React.Component {
         <Divider type="vertical"/>
          <Popconfirm
            title="Bạn có thật sự muốn xóa"
-           onConfirm={() => this.handleDeleteRoom(record)}
+           onConfirm={() => this.handleDeleteShift(record)}
            okText="Yes"
            cancelText="No"
          >
@@ -55,12 +55,12 @@ class RoomManager extends React.Component {
   ];
 
 
-  handleDeleteRoom = async (room) => {
-    const {roomId} = room;
-    const res = await deleteRoom(roomId)
+  handleDeleteShift = async (shift) => {
+    const {shiftId} = shift;
+    const res = await deleteShift(shiftId)
     if (res.success) {
       message.success('Xóa thành công')
-      await this.fetchRoom();
+      await this.fetchShift();
     } else {
       message.error(res.message)
     }
@@ -70,21 +70,21 @@ class RoomManager extends React.Component {
   handleOpenCreateModal = () => {
     this.setState({isCreateModalVisible: true})
   }
-  handleOpenEditModal = (selectedRoom) => {
+  handleOpenEditModal = (selectedShift) => {
     this.setState({
       isEditModalVisible: true,
-      selectedRoom: selectedRoom
+      selectedShift: selectedShift
     })
   }
 
-  handleCreateRoom = () => {
-    this.props.form.validateFields(['createdRoomName', 'createdRoomCredit'], async (errors, values) => {
+  handleCreateShift = () => {
+    this.props.form.validateFields(['createdShiftName', 'createdShiftCredit'], async (errors, values) => {
       if (!errors) {
-        const res = await createRoom(values.createdRoomName, parseInt(values.createdRoomCredit, 10))
+        const res = await createShift(values.createdShiftName, parseInt(values.createdShiftCredit, 10))
         if (res.success) {
           message.success('Thêm thành công');
           this.handleCloseCreateModal();
-          await this.fetchRoom();
+          await this.fetchShift();
         } else {
           message.error(res.message)
         }
@@ -92,15 +92,15 @@ class RoomManager extends React.Component {
     })
   };
 
-  handleEditRoom = () => {
-    this.props.form.validateFields(['updatedRoomName', 'updatedRoomCredit'], async (errors, values) => {
+  handleEditShift = () => {
+    this.props.form.validateFields(['updatedShiftName', 'updatedShiftCredit'], async (errors, values) => {
       if (!errors) {
-        const {roomId} = this.state.selectedRoom;
-        const res = await updateRoom(roomId, values.updatedRoomName, parseInt(values.updatedRoomCredit, 10))
+        const {shiftId} = this.state.selectedShift;
+        const res = await updateShift(shiftId, values.updatedShiftName, parseInt(values.updatedShiftCredit, 10))
         if (res.success) {
           message.success('Sửa thành công');
           this.handleCloseEditModal();
-          await this.fetchRoom();
+          await this.fetchShift();
         } else {
           message.error(res.message)
         }
@@ -117,13 +117,13 @@ class RoomManager extends React.Component {
   handleCloseEditModal = () => {
     this.setState({
       isEditModalVisible: false,
-      selectedRoom: {}
+      selectedShift: {}
     })
   }
 
 
   componentDidMount = async () => {
-    await this.fetchRoom()
+    await this.fetchShift()
   }
 
 
@@ -150,13 +150,13 @@ class RoomManager extends React.Component {
   uploadFile = async (options) => {
     const {onSuccess, onError, file, onProgress} = options;
     const fmData = new FormData();
-    fmData.append('rooms', file)
+    fmData.append('shifts', file)
     try {
-      const res = await importRoom(fmData)
+      const res = await importShift(fmData)
       onSuccess("Ok");
       if (res.success) {
         message.success('Import thành công')
-        await this.fetchRoom()
+        await this.fetchShift()
       } else {
         message.error(JSON.stringify(res.message))
       }
@@ -168,7 +168,7 @@ class RoomManager extends React.Component {
   }
 
   render() {
-    console.log('room', this.state.roomList)
+    console.log('shift', this.state.shiftList)
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -180,7 +180,7 @@ class RoomManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {roomList, isCreateModalVisible, isEditModalVisible, selectedRoom, fileList} = this.state
+    const {shiftList, isCreateModalVisible, isEditModalVisible, selectedShift, fileList} = this.state
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
@@ -191,17 +191,17 @@ class RoomManager extends React.Component {
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
-          <Table dataSource={roomList} columns={this.columns} rowKey={(record) => record.roomId}/>;
+          <Table dataSource={shiftList} columns={this.columns} rowKey={(record) => record.shiftId}/>;
         </Row>
         <Modal
           title="Thêm phòng"
           visible={isCreateModalVisible}
-          onOk={this.handleCreateRoom}
+          onOk={this.handleCreateShift}
           onCancel={this.handleCloseCreateModal}
         >
           <Form  {...formItemLayout}>
             <Form.Item label="Tên phòng" hasFeedback>
-              {getFieldDecorator('createdRoomName', {
+              {getFieldDecorator('createdShiftName', {
                 rules: [
                   {
                     required: true,
@@ -211,7 +211,7 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('createdRoomCredit', {
+              {getFieldDecorator('createdShiftCredit', {
                 rules: [
                   {
                     required: true,
@@ -225,13 +225,13 @@ class RoomManager extends React.Component {
         <Modal
           title="Sửa"
           visible={isEditModalVisible}
-          onOk={this.handleEditRoom}
+          onOk={this.handleEditShift}
           onCancel={this.handleCloseEditModal}
         >
           <Form  {...formItemLayout}>
             <Form.Item label="Tên phòng" hasFeedback>
-              {getFieldDecorator('updatedRoomName', {
-                initialValue: selectedRoom && selectedRoom.roomName,
+              {getFieldDecorator('updatedShiftName', {
+                initialValue: selectedShift && selectedShift.shiftName,
                 rules: [
                   {
                     required: true,
@@ -241,8 +241,8 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('updatedRoomCredit', {
-                initialValue: selectedRoom && selectedRoom.roomCredit,
+              {getFieldDecorator('updatedShiftCredit', {
+                initialValue: selectedShift && selectedShift.shiftCredit,
                 rules: [
                   {
                     required: true,
@@ -258,5 +258,5 @@ class RoomManager extends React.Component {
   }
 }
 
-export default withLayout('admin2')(Form.create({name: 'register'})(RoomManager))
+export default withLayout('admin4')(Form.create({name: 'register'})(ShiftManager))
 

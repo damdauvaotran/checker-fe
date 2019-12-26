@@ -258,5 +258,5 @@ class RoomManager extends React.Component {
   }
 }
 
-export default withLayout('admin2')(Form.create({name: 'register'})(RoomManager))
+export default withLayout('admin1')(Form.create({name: 'register'})(RoomManager))
 

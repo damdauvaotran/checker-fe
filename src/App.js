@@ -21,6 +21,8 @@ import Dashboard from './pages/dashboard'
 import ExamRegister from "./pages/examRegister";
 import SubjectManager from './pages/admin/subject'
 import RoomManager from './pages/admin/room'
+import ShiftManager from './pages/admin/shift'
+import StudentManager from "./pages/admin/student";
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -62,12 +64,12 @@ function App() {
           </Route>
           <Route path='/admin/shift'>
             {
-              requireAuth(<SubjectManager/>)
+              requireAuth(<ShiftManager/>)
             }
           </Route>
           <Route path='/admin/student'>
             {
-              requireAuth(<SubjectManager/>)
+              requireAuth(<StudentManager/>)
             }
           </Route>
           <Route path='/register'>

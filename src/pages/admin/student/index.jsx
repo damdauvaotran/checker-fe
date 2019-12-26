@@ -1,37 +1,37 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllRoom, createRoom, updateRoom, deleteRoom, importRoom} from '../../../api/admin/room'
+import {getAllStudent, createStudent, updateStudent, deleteStudent, importStudent} from '../../../api/admin/student'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
-class RoomManager extends React.Component {
+class StudentManager extends React.Component {
   state = {
-    roomList: [],
+    studentList: [],
     isCreateModalVisible: false,
     isEditModalVisible: false,
-    createdRoom: {},
-    updatedRoom: {},
-    selectedRoom: {},
+    createdStudent: {},
+    updatedStudent: {},
+    selectedStudent: {},
     file: null,
     fileList: []
   };
 
-  fetchRoom = async () => {
-    const res = await getAllRoom()
+  fetchStudent = async () => {
+    const res = await getAllStudent()
     this.setState({
-      roomList: res.data.roomList,
+      studentList: res.data.studentList,
     })
   };
 
   columns = [
     {
-      title: 'Tên phòng',
-      dataIndex: 'roomName',
-      key: 'roomName',
+      title: 'Tên',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: 'Số chỗ ngồi',
-      dataIndex: 'totalSlot',
-      key: 'totalSlot',
+      title: 'MSSV',
+      dataIndex: 'mssv',
+      key: 'mssv',
     },
     {
       title: 'Hành động',
@@ -42,7 +42,7 @@ class RoomManager extends React.Component {
         <Divider type="vertical"/>
          <Popconfirm
            title="Bạn có thật sự muốn xóa"
-           onConfirm={() => this.handleDeleteRoom(record)}
+           onConfirm={() => this.handleDeleteStudent(record)}
            okText="Yes"
            cancelText="No"
          >
@@ -55,12 +55,12 @@ class RoomManager extends React.Component {
   ];
 
 
-  handleDeleteRoom = async (room) => {
-    const {roomId} = room;
-    const res = await deleteRoom(roomId)
+  handleDeleteStudent = async (student) => {
+    const {studentId} = student;
+    const res = await deleteStudent(studentId)
     if (res.success) {
       message.success('Xóa thành công')
-      await this.fetchRoom();
+      await this.fetchStudent();
     } else {
       message.error(res.message)
     }
@@ -70,21 +70,21 @@ class RoomManager extends React.Component {
   handleOpenCreateModal = () => {
     this.setState({isCreateModalVisible: true})
   }
-  handleOpenEditModal = (selectedRoom) => {
+  handleOpenEditModal = (selectedStudent) => {
     this.setState({
       isEditModalVisible: true,
-      selectedRoom: selectedRoom
+      selectedStudent: selectedStudent
     })
   }
 
-  handleCreateRoom = () => {
-    this.props.form.validateFields(['createdRoomName', 'createdRoomCredit'], async (errors, values) => {
+  handleCreateStudent = () => {
+    this.props.form.validateFields(['createdStudentName', 'createdStudentCredit'], async (errors, values) => {
       if (!errors) {
-        const res = await createRoom(values.createdRoomName, parseInt(values.createdRoomCredit, 10))
+        const res = await createStudent(values.createdStudentName, parseInt(values.createdStudentCredit, 10))
         if (res.success) {
           message.success('Thêm thành công');
           this.handleCloseCreateModal();
-          await this.fetchRoom();
+          await this.fetchStudent();
         } else {
           message.error(res.message)
         }
@@ -92,15 +92,15 @@ class RoomManager extends React.Component {
     })
   };
 
-  handleEditRoom = () => {
-    this.props.form.validateFields(['updatedRoomName', 'updatedRoomCredit'], async (errors, values) => {
+  handleEditStudent = () => {
+    this.props.form.validateFields(['updatedStudentName', 'updatedStudentCredit'], async (errors, values) => {
       if (!errors) {
-        const {roomId} = this.state.selectedRoom;
-        const res = await updateRoom(roomId, values.updatedRoomName, parseInt(values.updatedRoomCredit, 10))
+        const {studentId} = this.state.selectedStudent;
+        const res = await updateStudent(studentId, values.updatedStudentName, parseInt(values.updatedStudentCredit, 10))
         if (res.success) {
           message.success('Sửa thành công');
           this.handleCloseEditModal();
-          await this.fetchRoom();
+          await this.fetchStudent();
         } else {
           message.error(res.message)
         }
@@ -117,13 +117,13 @@ class RoomManager extends React.Component {
   handleCloseEditModal = () => {
     this.setState({
       isEditModalVisible: false,
-      selectedRoom: {}
+      selectedStudent: {}
     })
   }
 
 
   componentDidMount = async () => {
-    await this.fetchRoom()
+    await this.fetchStudent()
   }
 
 
@@ -150,13 +150,13 @@ class RoomManager extends React.Component {
   uploadFile = async (options) => {
     const {onSuccess, onError, file, onProgress} = options;
     const fmData = new FormData();
-    fmData.append('rooms', file)
+    fmData.append('students', file)
     try {
-      const res = await importRoom(fmData)
+      const res = await importStudent(fmData)
       onSuccess("Ok");
       if (res.success) {
         message.success('Import thành công')
-        await this.fetchRoom()
+        await this.fetchStudent()
       } else {
         message.error(JSON.stringify(res.message))
       }
@@ -168,7 +168,7 @@ class RoomManager extends React.Component {
   }
 
   render() {
-    console.log('room', this.state.roomList)
+    console.log('student', this.state.studentList)
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -180,7 +180,7 @@ class RoomManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {roomList, isCreateModalVisible, isEditModalVisible, selectedRoom, fileList} = this.state
+    const {studentList, isCreateModalVisible, isEditModalVisible, selectedStudent, fileList} = this.state
     return (
       <div>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
@@ -191,17 +191,17 @@ class RoomManager extends React.Component {
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
-          <Table dataSource={roomList} columns={this.columns} rowKey={(record) => record.roomId}/>;
+          <Table dataSource={studentList} columns={this.columns} rowKey={(record) => record.userId}/>;
         </Row>
         <Modal
           title="Thêm phòng"
           visible={isCreateModalVisible}
-          onOk={this.handleCreateRoom}
+          onOk={this.handleCreateStudent}
           onCancel={this.handleCloseCreateModal}
         >
           <Form  {...formItemLayout}>
             <Form.Item label="Tên phòng" hasFeedback>
-              {getFieldDecorator('createdRoomName', {
+              {getFieldDecorator('createdStudentName', {
                 rules: [
                   {
                     required: true,
@@ -211,7 +211,7 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('createdRoomCredit', {
+              {getFieldDecorator('createdStudentCredit', {
                 rules: [
                   {
                     required: true,
@@ -225,13 +225,13 @@ class RoomManager extends React.Component {
         <Modal
           title="Sửa"
           visible={isEditModalVisible}
-          onOk={this.handleEditRoom}
+          onOk={this.handleEditStudent}
           onCancel={this.handleCloseEditModal}
         >
           <Form  {...formItemLayout}>
             <Form.Item label="Tên phòng" hasFeedback>
-              {getFieldDecorator('updatedRoomName', {
-                initialValue: selectedRoom && selectedRoom.roomName,
+              {getFieldDecorator('updatedStudentName', {
+                initialValue: selectedStudent && selectedStudent.studentName,
                 rules: [
                   {
                     required: true,
@@ -241,8 +241,8 @@ class RoomManager extends React.Component {
               })(<Input></Input>)}
             </Form.Item>
             <Form.Item label="Số chỗ ngồi" hasFeedback>
-              {getFieldDecorator('updatedRoomCredit', {
-                initialValue: selectedRoom && selectedRoom.roomCredit,
+              {getFieldDecorator('updatedStudentCredit', {
+                initialValue: selectedStudent && selectedStudent.studentCredit,
                 rules: [
                   {
                     required: true,
@@ -258,5 +258,5 @@ class RoomManager extends React.Component {
   }
 }
 
-export default withLayout('admin2')(Form.create({name: 'register'})(RoomManager))
+export default withLayout('admin3')(Form.create({name: 'register'})(StudentManager))
 

@@ -27,6 +27,10 @@ export const deleteShift = (id, name, credit) => deleteAuthRequest({
   url: `/admin/shift/${id}`,
 });
 
+export const importShift = (id, name, credit) => deleteAuthRequest({
+  url: `/admin/shift/${id}`,
+});
+
 
 
 
