@@ -9,16 +9,20 @@ export const setUserToken = (token, expire = 3) => {
   return cookie.set('checkerToken', token, {expires: expire})
 }
 
-export const clearUserToken = ()=>{
+export const clearUserToken = () => {
   return cookie.remove('checkerToken')
 }
 
 export const isLogin = () => {
-  return !!getUserToken()
+  const token = getUserToken();
+  if (token) {
+    const {exp} = jwt.decode(token);
+    return exp * 1000 >= Date.now();
+  }
+  return false
 }
 
 export const getUserData = () => {
   const token = getUserToken();
-  const data = jwt.decode(token);
-  return data
+  return jwt.decode(token)
 }
