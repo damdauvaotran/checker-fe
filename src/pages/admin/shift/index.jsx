@@ -64,7 +64,7 @@ class ShiftManager extends React.Component {
       key: 'roomName',
     },
     {
-      title: 'Phòng',
+      title: 'Môn',
       dataIndex: 'subject.subjectName',
       key: 'subjectName',
     },
