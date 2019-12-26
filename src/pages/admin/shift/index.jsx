@@ -159,12 +159,13 @@ class ShiftManager extends React.Component {
     this.props.form.validateFields(['updatedShiftRoom', 'updatedShiftSubject', 'updatedShiftDate', 'updatedShiftFrom'], async (errors, values) => {
       if (!errors) {
         try {
-          const {updatedShiftRoom, updatedShiftSubject, updatedShiftDate, updatedShiftFrom} = values
+          const {examShiftId} = this.state.selectedShift
+          const {updatedShiftRoom, updatedShiftSubject, updatedShiftDate, updatedShiftFrom} = values;
           const formatDate = updatedShiftDate.format('DD/MM/YYYY')
           const formatFrom = updatedShiftFrom.format('HH:mm')
-          const res = await createShift(updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
+          const res = await updateShift( examShiftId, updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
           if (res.success) {
-            message.success('Thêm thành công')
+            message.success('Sửa thành công')
             this.handleCloseEditModal()
             this.fetchShift()
           } else {

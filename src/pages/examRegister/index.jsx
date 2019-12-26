@@ -33,9 +33,9 @@ class ExamRegister extends React.Component {
   render() {
     const {getFieldDecorator} = this.props.form;
     const  {allowedSubject }   = this.state;
+    console.log('allowedSubject' , allowedSubject)
     return (
       <div>
-
         <Form onSubmit={this.handleSubmit} className="login-form">
           {
             allowedSubject.map((subject , index)=>{
