@@ -2,12 +2,12 @@ import React from "react";
 import moment from 'moment'
 import {withLayout} from '../../../shared-component/Layout/Layout'
 import {
-  getAllShift,
-  createShift,
-  updateShift,
-  deleteShift,
+  getAllShiftWithSemester,
+  createShiftWithSemester,
+  updateShiftWithSemester,
+  deleteShiftWithSemester,
   importShift,
-  getRegisteredStudentByShift, getRegisteredStudent
+  getRegisteredStudentWithSemester
 } from '../../../api/admin/shift'
 import {
   Table,
@@ -30,6 +30,8 @@ import {Document, Page, PDFDownloadLink, StyleSheet} from "@react-pdf/renderer";
 import {Table as PdfTable} from "@david.kucsai/react-pdf-table/lib/Table";
 import {DataTableCell, TableBody, TableCell, TableHeader} from "@david.kucsai/react-pdf-table";
 import PdfStudentList from "../../../shared-component/PdfStudentList";
+import {getSemesterById} from "../../../api/admin/semester";
+import {withRouter} from "react-router-dom";
 
 const {Option} = Select;
 
@@ -46,16 +48,17 @@ class ShiftManager extends React.Component {
     fileList: [],
     roomList: [],
     subjectList: [],
+    semester: {}
   };
 
   fetchShift = async () => {
-    const res = await getAllShift()
-    const res2 = await getRegisteredStudent()
-    if (res.success && res2.success){
+    const res = await getAllShiftWithSemester(this.getSemesterId())
+    const res2 = await getRegisteredStudentWithSemester(this.getSemesterId())
+    if (res.success && res2.success) {
       this.setState({
-        shiftList: res.data.shiftList.map((shift , index)=>{
-          const studentList = res2.data.shiftList[index].examRegistrations.map(registration => registration.user )
-          return {...shift , studentList,}
+        shiftList: res.data.shiftList.map((shift, index) => {
+          const studentList = res2.data.shiftList[index].examRegistrations.map(registration => registration.user)
+          return {...shift, studentList,}
         }),
       })
     } else {
@@ -63,9 +66,19 @@ class ShiftManager extends React.Component {
     }
   };
 
+  fetchSemesterById = async (semesterId) => {
+    const res = await getSemesterById(semesterId)
+    if (res.success) {
+      console.log('semester', res.data)
+      this.setState({
+        semester: res.data.semester
+      })
+    }
+  }
+
   fetchSubject = async () => {
     const res = await getAllSubject()
-    if (res.success){
+    if (res.success) {
       this.setState({
         subjectList: res.data.subjectList,
       })
@@ -76,7 +89,7 @@ class ShiftManager extends React.Component {
 
   fetchRoom = async () => {
     const res = await getAllRoom()
-    if (res.success){
+    if (res.success) {
       this.setState({
         roomList: res.data.roomList,
       })
@@ -85,6 +98,9 @@ class ShiftManager extends React.Component {
     }
   }
 
+  getSemesterId = () => {
+    return this.state.semester.semesterId
+  }
 
 
   columns = [
@@ -121,7 +137,7 @@ class ShiftManager extends React.Component {
     {
       title: 'Hành động',
       key: 'action',
-      render:  (text, record) => {
+      render: (text, record) => {
         return (
           <span>
             <PDFDownloadLink document={<PdfStudentList shift={record}/>} fileName="somename.pdf">
@@ -148,7 +164,7 @@ class ShiftManager extends React.Component {
 
   handleDeleteShift = async (shift) => {
     const {examShiftId} = shift;
-    const res = await deleteShift(examShiftId);
+    const res = await deleteShiftWithSemester(this.getSemesterId(), examShiftId);
     if (res.success) {
       message.success('Xóa thành công');
       await this.fetchShift();
@@ -176,7 +192,7 @@ class ShiftManager extends React.Component {
           const {createdShiftRoom, createdShiftSubject, createdShiftDate, createdShiftFrom} = values
           const formatDate = createdShiftDate.format('DD/MM/YYYY')
           const formatFrom = createdShiftFrom.format('HH:mm')
-          const res = await createShift(createdShiftRoom, createdShiftSubject, formatDate, formatFrom)
+          const res = await createShiftWithSemester(this.getSemesterId(), createdShiftRoom, createdShiftSubject, formatDate, formatFrom)
           if (res.success) {
             message.success('Thêm thành công');
             this.handleCloseCreateModal();
@@ -199,7 +215,7 @@ class ShiftManager extends React.Component {
           const {updatedShiftRoom, updatedShiftSubject, updatedShiftDate, updatedShiftFrom} = values;
           const formatDate = updatedShiftDate.format('DD/MM/YYYY')
           const formatFrom = updatedShiftFrom.format('HH:mm')
-          const res = await updateShift(examShiftId, updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
+          const res = await updateShiftWithSemester(this.getSemesterId(), examShiftId, updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
           if (res.success) {
             message.success('Sửa thành công')
             this.handleCloseEditModal()
@@ -229,6 +245,7 @@ class ShiftManager extends React.Component {
 
 
   componentDidMount = () => {
+    this.fetchSemesterById(this.props.match.params.id)
     this.fetchShift()
     this.fetchSubject()
     this.fetchRoom()
@@ -276,9 +293,9 @@ class ShiftManager extends React.Component {
   }
 
 
-
   render() {
     console.log('shift', this.state.shiftList)
+    console.log('props', this.props)
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -290,9 +307,16 @@ class ShiftManager extends React.Component {
         sm: {span: 19},
       },
     };
-    const {shiftList, isCreateModalVisible, isEditModalVisible, selectedShift, fileList, roomList, subjectList} = this.state
+    const {shiftList, isCreateModalVisible, isEditModalVisible, selectedShift, fileList, roomList, subjectList, semester} = this.state
     return (
       <div>
+        <Row>
+          <h3>
+            {
+              semester && semester.semesterName
+            }
+          </h3>
+        </Row>
         <Row style={{display: 'flex', justifyContent: 'flex-end'}}>
           {/*<Upload onChange={this.handleUploadFile} customRequest={this.uploadFile} fileList={fileList}>*/}
           {/*  <Button type='primary' icon='file-excel'>Import </Button>*/}
@@ -433,5 +457,5 @@ class ShiftManager extends React.Component {
   }
 }
 
-export default withLayout('admin4')(Form.create({name: 'register'})(ShiftManager))
+export default withRouter(withLayout('admin4')(Form.create({name: 'register'})(ShiftManager)))
 

@@ -23,6 +23,7 @@ import SubjectManager from './pages/admin/subject'
 import RoomManager from './pages/admin/room'
 import ShiftManager from './pages/admin/shift'
 import StudentManager from "./pages/admin/student";
+import SemesterManger from "./pages/admin/semester";
 import './assets/font/Roboto-Regular.ttf'
 
 i18n
@@ -45,6 +46,7 @@ function App() {
     <div className='App'>
       <Router>
         <Switch>
+
           <Route exact path='/'>
             {
               requireAuth(<ExamRegister/>)
@@ -73,6 +75,16 @@ function App() {
           <Route path='/admin/student'>
             {
               requireAuth(<StudentManager/>)
+            }
+          </Route>
+          <Route exact path='/admin/semester'>
+            {
+              requireAuth(<SemesterManger/>)
+            }
+          </Route>
+          <Route exact path='/admin/semester/:id'>
+            {
+              requireAuth(<ShiftManager/>)
             }
           </Route>
           <Route path='/register'>

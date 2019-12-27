@@ -30,11 +30,17 @@ export default {
       icon: 'team',
       title: 'Quản lý học sinh'
     },
+    // {
+    //   url: '/admin/shift',
+    //   key: 'admin4',
+    //   icon: 'team',
+    //   title: 'Quản lý ca thi'
+    // },
     {
-      url: '/admin/shift',
-      key: 'admin4',
+      url: '/admin/semester',
+      key: 'admin5',
       icon: 'team',
-      title: 'Quản lý ca thi'
+      title: 'Quản lý kỳ thi'
     },
   ]
 }
