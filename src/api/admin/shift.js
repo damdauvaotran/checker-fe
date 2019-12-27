@@ -27,9 +27,13 @@ export const deleteShift = (id, name, credit) => deleteAuthRequest({
   url: `/admin/shift/${id}`,
 });
 
-export const importShift = (id, name, credit) => deleteAuthRequest({
+export const importShift = (id) => deleteAuthRequest({
   url: `/admin/shift/${id}`,
 });
+
+export const getRegisteredStudentByShift = (id) =>getAuthRequest({
+  url: `/admin/shift/${id}/registered`,
+})
 
 
 

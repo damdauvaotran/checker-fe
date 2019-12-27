@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@david.kucsai/react-pdf-table": "^0.1.1",
+    "@react-pdf/fontkit": "^1.13.0",
+    "@react-pdf/renderer": "^1.6.8",
     "antd": "^3.24.3",
     "axios": "^0.19.0",
     "i18next": "^19.0.2",

@@ -9,6 +9,21 @@ import {
   importAllowedStudent
 } from '../../../api/admin/subject'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
+import {Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink} from '@react-pdf/renderer';
+import {DataTableCell, Table as PdfTable, TableBody, TableCell, TableHeader} from '@david.kucsai/react-pdf-table'
+
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: 'row',
+    backgroundColor: '#E4E4E4'
+  },
+  section: {
+    margin: 10,
+    padding: 10,
+    flexGrow: 1
+  }
+});
+
 
 class SubjectManager extends React.Component {
   state = {
@@ -45,11 +60,16 @@ class SubjectManager extends React.Component {
       key: 'action',
       render: (text, record) => (
         <span>
-          <Upload  customRequest={this.uploadAllowedStudent(record)}
-                  fileList={[]}>
-            <Button type='primary' icon='file-add'> </Button>
-          </Upload>
-          <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
+          <div style={{display: 'inline-block'}}>
+            <Upload customRequest={this.uploadAllowedStudent(record)} fileList={[]}>
+
+              <Button type='primary' icon='file-add'>Import</Button>
+            </Upload>
+          </div>
+          <Divider type="vertical"/>
+
+          <Button type='primary' icon='edit'
+                  onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
           <Divider type="vertical"/>
           <Popconfirm
             title="Bạn có thật sự muốn xóa"
@@ -64,7 +84,6 @@ class SubjectManager extends React.Component {
     },
 
   ];
-
 
   handleDeleteSubject = async (subject) => {
     const {subjectId} = subject;
@@ -148,9 +167,8 @@ class SubjectManager extends React.Component {
   }
 
 
-
   uploadAllowedStudent = (record) => async (options) => {
-    console.log("record" , record)
+    console.log("record", record)
     const {onSuccess, onError, file, onProgress} = options;
     const fmData = new FormData();
     fmData.append('students', file)
@@ -215,6 +233,8 @@ class SubjectManager extends React.Component {
         <Row>
           <Table dataSource={subjectList} columns={this.columns} rowKey={(record) => record.subjectId}/>;
         </Row>
+
+
         <Modal
           title="Thêm môn"
           visible={isCreateModalVisible}

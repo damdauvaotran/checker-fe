@@ -1,7 +1,14 @@
 import React from "react";
 import moment from 'moment'
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllShift, createShift, updateShift, deleteShift, importShift} from '../../../api/admin/shift'
+import {
+  getAllShift,
+  createShift,
+  updateShift,
+  deleteShift,
+  importShift,
+  getRegisteredStudentByShift
+} from '../../../api/admin/shift'
 import {
   Table,
   Divider,
@@ -19,8 +26,13 @@ import {
 } from 'antd'
 import {getAllSubject} from "../../../api/admin/subject";
 import {getAllRoom} from "../../../api/admin/room";
+import {Document, Page, PDFDownloadLink, StyleSheet} from "@react-pdf/renderer";
+import {Table as PdfTable} from "@david.kucsai/react-pdf-table/lib/Table";
+import {DataTableCell, TableBody, TableCell, TableHeader} from "@david.kucsai/react-pdf-table";
+import PdfStudentList from "../../../shared-component/PdfStudentList";
 
 const {Option} = Select;
+
 
 class ShiftManager extends React.Component {
   state = {
@@ -57,6 +69,7 @@ class ShiftManager extends React.Component {
     })
   }
 
+
   columns = [
     {
       title: 'Phòng',
@@ -84,27 +97,33 @@ class ShiftManager extends React.Component {
       render: (text, record, index) => {
         return <div>
           {/*{JSON.stringify(record)}*/}
-          {record.registered + '/'+  record.room.totalSlot}
+          {record.registered + '/' + record.room.totalSlot}
         </div>
       }
     },
     {
       title: 'Hành động',
       key: 'action',
-      render: (text, record) => (
-        <span>
-        <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
-        <Divider type="vertical"/>
-         <Popconfirm
-           title="Bạn có thật sự muốn xóa"
-           onConfirm={() => this.handleDeleteShift(record)}
-           okText="Yes"
-           cancelText="No"
-         >
-     <Button type='danger' icon='delete'>Xóa</Button>
-      </Popconfirm>,
-      </span>
-      ),
+      render:  (text, record) => {
+        return (
+          <span>
+            <PDFDownloadLink document={<PdfStudentList shift={record}/>} fileName="somename.pdf">
+              <Button type='primary'>Export</Button>
+            </PDFDownloadLink>
+            <Divider type="vertical"/>
+            <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
+            <Divider type="vertical"/>
+             <Popconfirm
+               title="Bạn có thật sự muốn xóa"
+               onConfirm={() => this.handleDeleteShift(record)}
+               okText="Yes"
+               cancelText="No"
+             >
+            <Button type='danger' icon='delete'>Xóa</Button>
+            </Popconfirm>,
+          </span>
+        )
+      }
     },
 
   ];
@@ -163,7 +182,7 @@ class ShiftManager extends React.Component {
           const {updatedShiftRoom, updatedShiftSubject, updatedShiftDate, updatedShiftFrom} = values;
           const formatDate = updatedShiftDate.format('DD/MM/YYYY')
           const formatFrom = updatedShiftFrom.format('HH:mm')
-          const res = await updateShift( examShiftId, updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
+          const res = await updateShift(examShiftId, updatedShiftRoom, updatedShiftSubject, formatDate, formatFrom);
           if (res.success) {
             message.success('Sửa thành công')
             this.handleCloseEditModal()
@@ -238,6 +257,8 @@ class ShiftManager extends React.Component {
       onError({err: e})
     }
   }
+
+
 
   render() {
     console.log('shift', this.state.shiftList)
@@ -368,7 +389,7 @@ class ShiftManager extends React.Component {
             </Form.Item>
             <Form.Item label="Ngày" hasFeedback>
               {getFieldDecorator('updatedShiftDate', {
-                initialValue: selectedShift && selectedShift.examDate && moment(selectedShift.examDate , 'DD/MM/YYYY'),
+                initialValue: selectedShift && selectedShift.examDate && moment(selectedShift.examDate, 'DD/MM/YYYY'),
                 rules: [
                   {
                     required: true,
@@ -379,7 +400,7 @@ class ShiftManager extends React.Component {
             </Form.Item>
             <Form.Item label="Bắt đầu" hasFeedback>
               {getFieldDecorator('updatedShiftFrom', {
-                initialValue: selectedShift && selectedShift.from && moment(selectedShift.from , 'HH:mm'),
+                initialValue: selectedShift && selectedShift.from && moment(selectedShift.from, 'HH:mm'),
                 rules: [
                   {
                     required: true,
