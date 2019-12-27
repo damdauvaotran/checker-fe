@@ -35,6 +35,10 @@ export const getRegisteredStudentByShift = (id) =>getAuthRequest({
   url: `/admin/shift/${id}/registered`,
 })
 
+export const getRegisteredStudent = () =>getAuthRequest({
+  url: `/admin/shifts/registered`,
+})
+
 
 
 

@@ -17,9 +17,14 @@ class RoomManager extends React.Component {
 
   fetchRoom = async () => {
     const res = await getAllRoom()
-    this.setState({
-      roomList: res.data.roomList,
-    })
+    if (res.success){
+      this.setState({
+        roomList: res.data.roomList,
+      })
+    } else {
+      message.error(res.message)
+    }
+
   };
 
   columns = [

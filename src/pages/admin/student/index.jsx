@@ -17,9 +17,13 @@ class StudentManager extends React.Component {
 
   fetchStudent = async () => {
     const res = await getAllStudent()
-    this.setState({
-      studentList: res.data.studentList,
-    })
+    if (res.success){
+      this.setState({
+        studentList: res.data.studentList,
+      })
+    } else {
+      message.error(res.message)
+    }
   };
 
   columns = [

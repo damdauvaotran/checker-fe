@@ -39,9 +39,13 @@ class SubjectManager extends React.Component {
 
   fetchSubject = async () => {
     const res = await getAllSubject()
-    this.setState({
-      subjectList: res.data.subjectList,
-    })
+    if (res.success) {
+      this.setState({
+        subjectList: res.data.subjectList,
+      })
+    } else {
+      message.error(res.message)
+    }
   };
 
   columns = [

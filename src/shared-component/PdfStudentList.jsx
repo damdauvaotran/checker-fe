@@ -22,28 +22,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#E4E4E4',
     // fontFamily: 'Roboto'
   },
+  table: {
+    display: "table",
+    width: "auto",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0
+  },
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row"
+  },
+  tableCol: {
+    width: "25%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0
+  },
+  tableCell: {
+    margin: "auto",
+    marginTop: 5,
+    fontSize: 10
+  }
 });
 
 class PdfStudentList extends React.Component {
-  state = {
-    data: []
-  }
 
-  async componentDidMount() {
-    const {examShiftId} = this.props.shift
-    const res = await getRegisteredStudentByShift(examShiftId)
-    if (res.success) {
-      this.setState({data: res.data.registeredStudentList})
-    } else {
-      message.error(res.message)
-    }
-  }
-
-  render() {
-    const {data} = this.state;
-    const {subjectName} = this.props.shift.subject
-    console.log('prop', this.props.shift)
-    console.log('data', data)
+  renderPdf = () => {
+    const {shift} = this.props
+    const {subjectName} = shift.subject
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -53,7 +62,7 @@ class PdfStudentList extends React.Component {
             </Text>
           </View>
           <PdfTable
-            data={data}
+            data={shift.studentList}
           >
             <TableHeader>
               <TableCell>
@@ -66,13 +75,52 @@ class PdfStudentList extends React.Component {
             <TableBody>
               <DataTableCell getContent={(r) => r.name}/>
               <DataTableCell getContent={(r) => r.mssv}/>
-
             </TableBody>
           </PdfTable>
-
+          {/*<View style={styles.table}>*/}
+          {/*  /!* TableHeader *!/*/}
+          {/*  <View style={styles.tableRow}>*/}
+          {/*    <View style={styles.tableCol}>*/}
+          {/*      <Text style={styles.tableCell}>Name</Text>*/}
+          {/*    </View>*/}
+          {/*    <View style={styles.tableCol}>*/}
+          {/*      <Text style={styles.tableCell}>MSSV</Text>*/}
+          {/*    </View>*/}
+          {/*    /!*<View style={styles.tableCol}>*!/*/}
+          {/*    /!*  <Text style={styles.tableCell}/>*!/*/}
+          {/*    /!*</View>*!/*/}
+          {/*  </View>*/}
+          {/*  /!* TableContent *!/*/}
+          {/*  {*/}
+          {/*    data.map(student => {*/}
+          {/*      return (*/}
+          {/*        <View key={student.userId} style={styles.tableRow}>*/}
+          {/*          <View style={styles.tableCol}>*/}
+          {/*            <Text style={styles.tableCell}>{student.name}</Text>*/}
+          {/*          </View>*/}
+          {/*          <View style={styles.tableCol}>*/}
+          {/*            <Text style={styles.tableCell}>{student.mssv} </Text>*/}
+          {/*          </View>*/}
+          {/*          /!*<View*!/*/}
+          {/*          /!*  style={styles.tableCol}>*!/*/}
+          {/*          /!*  <Text style={styles.tableCell}>{'    '}</Text>*!/*/}
+          {/*          /!*</View>*!/*/}
+          {/*        </View>*/}
+          {/*      )*/}
+          {/*    })*/}
+          {/*  }*/}
+          {/*</View>*/}
         </Page>
       </Document>
     )
+  }
+
+  render() {
+
+    // const {subjectName} = this.props.shift.subject;
+    return this.renderPdf()
+
+
   }
 }
 

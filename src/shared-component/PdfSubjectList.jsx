@@ -51,7 +51,7 @@ class PdfSubjectList extends React.Component {
               </TableCell>
             </TableHeader>
             <TableBody>
-              <DataTableCell getContent={(r) => r.subjectId.toString()}/>
+              <DataTableCell getContent={(r) => r.subjectName}/>
               <DataTableCell getContent={(r) => r.examShifts[0].room.roomName.toString()}/>
               <DataTableCell getContent={(r) => r.examShifts[0].examDate.toString()}/>
               <DataTableCell getContent={(r) => r.examShifts[0].from.toString()}/>

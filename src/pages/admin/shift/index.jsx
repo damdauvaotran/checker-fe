@@ -7,7 +7,7 @@ import {
   updateShift,
   deleteShift,
   importShift,
-  getRegisteredStudentByShift
+  getRegisteredStudentByShift, getRegisteredStudent
 } from '../../../api/admin/shift'
 import {
   Table,
@@ -50,24 +50,41 @@ class ShiftManager extends React.Component {
 
   fetchShift = async () => {
     const res = await getAllShift()
-    this.setState({
-      shiftList: res.data.shiftList,
-    })
+    const res2 = await getRegisteredStudent()
+    if (res.success && res2.success){
+      this.setState({
+        shiftList: res.data.shiftList.map((shift , index)=>{
+          const studentList = res2.data.shiftList[index].examRegistrations.map(registration => registration.user )
+          return {...shift , studentList,}
+        }),
+      })
+    } else {
+      message.error(res.message)
+    }
   };
 
   fetchSubject = async () => {
     const res = await getAllSubject()
-    this.setState({
-      subjectList: res.data.subjectList,
-    })
+    if (res.success){
+      this.setState({
+        subjectList: res.data.subjectList,
+      })
+    } else {
+      message.error(res.message)
+    }
   }
 
   fetchRoom = async () => {
     const res = await getAllRoom()
-    this.setState({
-      roomList: res.data.roomList,
-    })
+    if (res.success){
+      this.setState({
+        roomList: res.data.roomList,
+      })
+    } else {
+      message.error(res.message)
+    }
   }
+
 
 
   columns = [
@@ -120,7 +137,7 @@ class ShiftManager extends React.Component {
                cancelText="No"
              >
             <Button type='danger' icon='delete'>Xóa</Button>
-            </Popconfirm>,
+            </Popconfirm>
           </span>
         )
       }
@@ -284,7 +301,7 @@ class ShiftManager extends React.Component {
           <Button type='primary' icon='folder-add' onClick={this.handleOpenCreateModal}>Thêm </Button>
         </Row>
         <Row>
-          <Table dataSource={shiftList} columns={this.columns} rowKey={(record) => record.examShiftId}/>;
+          <Table dataSource={shiftList} columns={this.columns} rowKey={(record) => record.examShiftId}/>
         </Row>
         <Modal
           title="Thêm ca"
