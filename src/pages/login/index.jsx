@@ -46,7 +46,7 @@ class Login extends React.Component {
     const {isLoginSuccess} = this.state
     if (isLoginSuccess){
       return (
-        <Redirect to={{pathname: '/'}}></Redirect>
+        <Redirect to={{pathname: '/'}}/>
       )
     }
     return (

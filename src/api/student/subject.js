@@ -4,7 +4,7 @@ export const studentGetAllowedSubject = () => getAuthRequest({
   url: '/student/subjects'
 });
 
-export const studentGetRegisteredSubject  = (id)=> postAuthRequest({
+export const studentGetRegisteredSubject  = ()=> getAuthRequest({
   url: `/student/subjects/registered`
 });
 

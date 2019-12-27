@@ -35,6 +35,14 @@ export const importSubject = (file) => postAuthRequest({
   data: file
 })
 
+export const importAllowedStudent = (subjectId, file) => postAuthRequest({
+  url: `/admin/subject/${subjectId}/import`,
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  },
+  data: file
+})
+
 
 
 

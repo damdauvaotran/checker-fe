@@ -1,6 +1,13 @@
 import React from "react";
 import {withLayout} from '../../../shared-component/Layout/Layout'
-import {getAllSubject, createSubject, updateSubject, deleteSubject, importSubject} from '../../../api/admin/subject'
+import {
+  getAllSubject,
+  createSubject,
+  updateSubject,
+  deleteSubject,
+  importSubject,
+  importAllowedStudent
+} from '../../../api/admin/subject'
 import {Table, Divider, Button, Row, Modal, Col, Input, Form, Popconfirm, message, Upload} from 'antd'
 
 class SubjectManager extends React.Component {
@@ -12,7 +19,7 @@ class SubjectManager extends React.Component {
     updatedSubject: {},
     selectedSubject: {},
     file: null,
-    fileList: []
+    fileList: [],
   };
 
   fetchSubject = async () => {
@@ -38,17 +45,21 @@ class SubjectManager extends React.Component {
       key: 'action',
       render: (text, record) => (
         <span>
-        <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
-        <Divider type="vertical"/>
-         <Popconfirm
-           title="Bạn có thật sự muốn xóa"
-           onConfirm={() => this.handleDeleteSubject(record)}
-           okText="Yes"
-           cancelText="No"
-         >
-     <Button type='danger' icon='delete'>Xóa</Button>
-      </Popconfirm>,
-      </span>
+          <Upload  customRequest={this.uploadAllowedStudent(record)}
+                  fileList={[]}>
+            <Button type='primary' icon='file-add'> </Button>
+          </Upload>
+          <Button type='primary' icon='edit' onClick={() => this.handleOpenEditModal(record)}>Sửa</Button>
+          <Divider type="vertical"/>
+          <Popconfirm
+            title="Bạn có thật sự muốn xóa"
+            onConfirm={() => this.handleDeleteSubject(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type='danger' icon='delete'>Xóa</Button>
+          </Popconfirm>,
+        </span>
       ),
     },
 
@@ -128,23 +139,35 @@ class SubjectManager extends React.Component {
 
 
   handleUploadFile = (info) => {
-    // if (info.file.status !== 'uploading') {
-    //   console.log(info.file, info.fileList);
-    // }
-    // if (info.file.status === 'done') {
-    //   message.success(`${info.file.name} file uploaded successfully`);
-    // } else if (info.file.status === 'error') {
-    //   message.error(`${info.file.name} file upload failed.`);
-    // }
 
     let fileList = [...info.fileList];
-    // 1. Limit the number of uploaded files
-    // Only to show one recent uploaded files, and old ones will be replaced by the new
+    //  Limit the number of uploaded files
     fileList = fileList.slice(-1);
 
-    // 2. Read from response and show file link
-
     this.setState({fileList});
+  }
+
+
+
+  uploadAllowedStudent = (record) => async (options) => {
+    console.log("record" , record)
+    const {onSuccess, onError, file, onProgress} = options;
+    const fmData = new FormData();
+    fmData.append('students', file)
+    try {
+      const res = await importAllowedStudent(record.subjectId, fmData);
+      onSuccess("Ok");
+      if (res.success) {
+        message.success('Import thành công')
+        await this.fetchSubject()
+      } else {
+        message.error(JSON.stringify(res.message))
+      }
+
+    } catch (e) {
+      console.error(e)
+      onError({err: e})
+    }
   }
 
   uploadFile = async (options) => {

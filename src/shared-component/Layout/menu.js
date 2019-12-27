@@ -10,12 +10,6 @@ export default {
       icon: 'team',
       title: 'Đăng ký thi'
     },
-    {
-      url: '/',
-      key: '2',
-      icon: 'team',
-      title: 'Xem kết quả'
-    },
   ],
   admin: [
     {

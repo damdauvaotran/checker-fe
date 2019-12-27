@@ -2,7 +2,7 @@ import React from "react";
 import {Form, Icon, Input, Button, Checkbox, Row, Col, Table, Divider, Popconfirm, Select, message} from 'antd';
 
 import {withLayout} from '../../shared-component/Layout/Layout'
-import {studentGetAllowedSubject } from '../../api/student/subject'
+import {studentGetAllowedSubject, studentGetRegisteredSubject} from '../../api/student/subject'
 import {studentRegisterShift} from '../../api/student/shift'
 
 const {Option} = Select;
@@ -12,6 +12,7 @@ class ExamRegister extends React.Component {
   state = {
     allowedSubject: [],
     registerShift: [],
+    registeredSubjectList: []
   };
 
 
@@ -62,9 +63,21 @@ class ExamRegister extends React.Component {
     })
   }
 
+  fetchRegisteredSubject = async () => {
+    const res = await studentGetRegisteredSubject();
+    if (res.success) {
+      this.setState({
+        registeredSubjectList: res.data.subjectList
+      })
+    } else {
+      message.error('Server chưa chạy')
+    }
+  }
+
   async componentDidMount() {
 
     await this.fetchAllShift()
+    await this.fetchRegisteredSubject()
     window.x = () => {
       console.log(this.state.allowedSubject)
     }
@@ -81,8 +94,21 @@ class ExamRegister extends React.Component {
       dataIndex: 'examShifts',
       key: 'examShifts',
       render: (text, record, index) => {
-        return (
-          <div>
+        const {registeredSubjectList} = this.state;
+        const registeredSubject = registeredSubjectList.find(subject=>{
+          return subject.subjectId === record.subjectId
+        });
+
+        if (registeredSubject) {
+          console.log('registeredSubject',registeredSubject);
+          const registeredShift = registeredSubject.examShifts[0];
+          return (
+            <div>
+              {'Phòng: ' + registeredShift.room.roomName + ' ' + registeredShift.examDate + ' ' + registeredShift.from + ': ' + registeredShift.registered + '/' + registeredShift.room.totalSlot}
+            </div>
+          )
+        } else {
+          return <div>
             <Select style={{width: 500}} onChange={this.handleChangeShift(index)}>
               {record.examShifts.map(shift => {
                 return (
@@ -95,7 +121,8 @@ class ExamRegister extends React.Component {
             </Select>
             {/*{JSON.stringify(record)}*/}
           </div>
-        )
+        }
+
       }
     },
     {
@@ -112,9 +139,11 @@ class ExamRegister extends React.Component {
 
   render() {
     const {getFieldDecorator} = this.props.form;
-    const {allowedSubject, registerShift} = this.state;
+    const {allowedSubject, registerShift, registeredSubjectList} = this.state;
     console.log('allowedSubject', allowedSubject)
     console.log('allowedSubject', registerShift)
+    console.log('registeredSubject', registeredSubjectList)
+
     return (
       <div>
         {/*<Form onSubmit={this.handleSubmit} className="login-form">*/}
@@ -148,7 +177,7 @@ class ExamRegister extends React.Component {
 
         {/*</Form>*/}
 
-        <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId}/>;
+        <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId}/>
       </div>
     )
   }
