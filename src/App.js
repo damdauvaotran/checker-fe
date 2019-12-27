@@ -24,6 +24,7 @@ import RoomManager from './pages/admin/room'
 import ShiftManager from './pages/admin/shift'
 import StudentManager from "./pages/admin/student";
 import './assets/font/Roboto-Regular.ttf'
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
@@ -50,7 +51,9 @@ function App() {
             }
           </Route>
           <Route path='/login'>
-            <Login/>
+            {
+              requireNotAuth(<Login/>)
+            }
           </Route>
           <Route path='/admin/subject'>
             {
@@ -73,7 +76,9 @@ function App() {
             }
           </Route>
           <Route path='/register'>
-            <Register/>
+            {
+              requireNotAuth(<Register/>)
+            }
           </Route>
         </Switch>
       </Router>
@@ -92,7 +97,20 @@ function requireAuth(component) {
       pathname: "/login",
     }}
   />
-
 }
+
+function requireNotAuth(component) {
+  if (!isLogin()) {
+    return (
+      component
+    )
+  }
+  return <Redirect
+    to={{
+      pathname: "/",
+    }}
+  />
+}
+
 
 export default App;
