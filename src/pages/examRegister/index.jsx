@@ -4,6 +4,9 @@ import {Form, Icon, Input, Button, Checkbox, Row, Col, Table, Divider, Popconfir
 import {withLayout} from '../../shared-component/Layout/Layout'
 import {studentGetAllowedSubject, studentGetRegisteredSubject} from '../../api/student/subject'
 import {studentRegisterShift} from '../../api/student/shift'
+import {PDFDownloadLink} from "@react-pdf/renderer";
+import PdfStudentList from "../../shared-component/PdfStudentList";
+import PdfSubjectList from "../../shared-component/PdfSubjectList";
 
 const {Option} = Select;
 
@@ -95,12 +98,12 @@ class ExamRegister extends React.Component {
       key: 'examShifts',
       render: (text, record, index) => {
         const {registeredSubjectList} = this.state;
-        const registeredSubject = registeredSubjectList.find(subject=>{
+        const registeredSubject = registeredSubjectList.find(subject => {
           return subject.subjectId === record.subjectId
         });
 
         if (registeredSubject) {
-          console.log('registeredSubject',registeredSubject);
+          console.log('registeredSubject', registeredSubject);
           const registeredShift = registeredSubject.examShifts[0];
           return (
             <div>
@@ -176,8 +179,21 @@ class ExamRegister extends React.Component {
         {/*  }*/}
 
         {/*</Form>*/}
+        <Row>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end'
+          }}>
+            <PDFDownloadLink document={<PdfSubjectList subjectList={registeredSubjectList}/>} fileName="Dangky.pdf">
+              <Button type='primary' icon='file'>In kết quả</Button>
+            </PDFDownloadLink>
 
-        <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId}/>
+          </div>
+        </Row>
+        <Row>
+          <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId}/>
+        </Row>
+
       </div>
     )
   }
