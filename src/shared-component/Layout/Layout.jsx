@@ -41,7 +41,9 @@ export const withLayout = (seletedKey) => (WrappedComponent) => class extends Re
     return (
       <Layout style={{minHeight: '100vh'}}>
         <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} theme='light'>
-          <div className="logo">Checker</div>
+          <div className="logo">
+            <img src="https://uet.vnu.edu.vn/wp-content/uploads/2019/03/logo-outline.png" alt="" style={{width: 75}}/>
+          </div>
           <Menu
             defaultSelectedKeys={[seletedKey]}
             style={{lineHeight: '64px'}}
