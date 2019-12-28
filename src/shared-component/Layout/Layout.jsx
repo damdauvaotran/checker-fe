@@ -52,7 +52,7 @@ export const withLayout = (seletedKey) => (WrappedComponent) => class extends Re
           >
 
             {
-              data.r === 2 && menu.student.map(student => {
+              data && data.r === 1 && menu.student.map(student => {
                 return (
                   <Menu.Item key={student.key}>
                     <Link to={student.url}>
@@ -67,7 +67,7 @@ export const withLayout = (seletedKey) => (WrappedComponent) => class extends Re
             }
 
             {
-              data.r === 2 && <SubMenu title={
+              data && data.r === 2 && <SubMenu title={
                 <span className="submenu-title-wrapper">
                   <Icon type="team"/>
                   Admin

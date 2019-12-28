@@ -5,7 +5,8 @@ import {Form, Icon, Input, Button, Checkbox, Card, message} from "antd";
 import "./style.scss";
 import {withTranslation} from "react-i18next";
 import cookies from 'js-cookie'
-import {Redirect} from "react-router-dom";
+import {Redirect, withRouter} from "react-router-dom";
+import {getUserData} from "../../utils/auth";
 
 class Login extends React.Component {
   constructor(props) {
@@ -27,6 +28,15 @@ class Login extends React.Component {
           if (res.success) {
             message.success('Đăng nhập thành công');
             cookies.set('checkerToken', res.data.token, {expires: 3})
+            const {r} = getUserData();
+            console.log(r)
+            // if (r==2){
+            //   this.props.history.push('/admin/subject')
+            // }
+            // if (r==1){
+            //   this.props.history.push('/')
+            // }
+
             this.setState({
               isLoginSuccess: true
             })
@@ -44,9 +54,10 @@ class Login extends React.Component {
     const {getFieldDecorator} = this.props.form;
     const {t} = this.props;
     const {isLoginSuccess} = this.state
-    if (isLoginSuccess){
+    if (isLoginSuccess) {
+      const r = getUserData() && getUserData().r
       return (
-        <Redirect to={{pathname: '/'}}/>
+        <Redirect to={{pathname: r == 2 ? '/admin/subject' : '/'}}/>
       )
     }
     return (
@@ -113,4 +124,4 @@ class Login extends React.Component {
 }
 
 const WrappedNormalLoginForm = Form.create({name: "normal_login"})(Login);
-export default withTranslation()(WrappedNormalLoginForm);
+export default withRouter(withTranslation()(WrappedNormalLoginForm));

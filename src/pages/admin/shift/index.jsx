@@ -99,7 +99,8 @@ class ShiftManager extends React.Component {
   }
 
   getSemesterId = () => {
-    return this.state.semester.semesterId
+    // return this.state.semester.semesterId
+    return this.props.match.params.id
   }
 
 

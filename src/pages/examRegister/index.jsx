@@ -61,9 +61,12 @@ class ExamRegister extends React.Component {
 
   fetchAllShift = async () => {
     const res = await studentGetAllowedSubject()
-    this.setState({
-      allowedSubject: res.data.subjectList
-    })
+    if(res.success){
+      this.setState({
+        allowedSubject: res.data.subjectList
+      })
+    }
+
   }
 
   fetchRegisteredSubject = async () => {

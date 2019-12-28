@@ -61,7 +61,7 @@ class SemesterManager extends React.Component {
             <Button type='danger' icon='delete'>Xóa</Button>
           </Popconfirm>
           <Divider type="vertical"/>
-          <Button type='primary' icon='file' onClick={this.createRedirect(record.semesterId)}>Thêm ca thi</Button>
+          <Button type='primary' icon='file' onClick={this.createRedirect(record.semesterId)}>Điều chỉnh ca thi</Button>
         </span>
       ),
     },
