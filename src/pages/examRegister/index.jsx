@@ -1,14 +1,14 @@
 import React from "react";
-import {Form, Icon, Input, Button, Checkbox, Row, Col, Table, Divider, Popconfirm, Select, message} from 'antd';
+import { Form, Icon, Input, Button, Checkbox, Row, Col, Table, Divider, Popconfirm, Select, message } from 'antd';
 
-import {withLayout} from '../../shared-component/Layout/Layout'
-import {studentGetAllowedSubject, studentGetRegisteredSubject} from '../../api/student/subject'
-import {studentRegisterShift} from '../../api/student/shift'
-import {PDFDownloadLink} from "@react-pdf/renderer";
+import { withLayout } from '../../shared-component/Layout/Layout'
+import { studentGetAllowedSubject, studentGetRegisteredSubject } from '../../api/student/subject'
+import { studentRegisterShift } from '../../api/student/shift'
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfStudentList from "../../shared-component/PdfStudentList";
 import PdfSubjectList from "../../shared-component/PdfSubjectList";
 
-const {Option} = Select;
+const { Option } = Select;
 
 // Todo: add registered subject
 class ExamRegister extends React.Component {
@@ -21,7 +21,7 @@ class ExamRegister extends React.Component {
 
   handleRegister = (index) => async (e) => {
     e.preventDefault();
-    const {registerShift} = this.state
+    const { registerShift } = this.state
     try {
       const res = await studentRegisterShift(registerShift[index])
       if (res.success) {
@@ -49,7 +49,7 @@ class ExamRegister extends React.Component {
   }
 
   isAllowedRegister = (index) => {
-    const {registerShift, allowedSubject} = this.state;
+    const { registerShift, allowedSubject } = this.state;
     if (registerShift[index]) {
       const selectShift = allowedSubject[index].examShifts.find((shift) => shift.examShiftId === registerShift[index])
       console.log(selectShift);
@@ -61,9 +61,12 @@ class ExamRegister extends React.Component {
 
   fetchAllShift = async () => {
     const res = await studentGetAllowedSubject()
-    this.setState({
-      allowedSubject: res.data.subjectList
-    })
+    if (res.success) {
+      this.setState({
+        allowedSubject: res.data.subjectList
+      })
+    }
+
   }
 
   fetchRegisteredSubject = async () => {
@@ -97,7 +100,7 @@ class ExamRegister extends React.Component {
       dataIndex: 'examShifts',
       key: 'examShifts',
       render: (text, record, index) => {
-        const {registeredSubjectList} = this.state;
+        const { registeredSubjectList } = this.state;
         const registeredSubject = registeredSubjectList.find(subject => {
           return subject.subjectId === record.subjectId
         });
@@ -112,7 +115,7 @@ class ExamRegister extends React.Component {
           )
         } else {
           return <div>
-            <Select style={{width: 500}} onChange={this.handleChangeShift(index)}>
+            <Select style={{ width: 500 }} onChange={this.handleChangeShift(index)}>
               {record.examShifts.map(shift => {
                 return (
                   <Option key={shift.examShiftId} value={shift.examShiftId}>
@@ -141,8 +144,8 @@ class ExamRegister extends React.Component {
   ];
 
   render() {
-    const {getFieldDecorator} = this.props.form;
-    const {allowedSubject, registerShift, registeredSubjectList} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const { allowedSubject, registerShift, registeredSubjectList } = this.state;
     console.log('allowedSubject', allowedSubject)
     console.log('allowedSubject', registerShift)
     console.log('registeredSubject', registeredSubjectList)
@@ -184,14 +187,14 @@ class ExamRegister extends React.Component {
             display: 'flex',
             justifyContent: 'flex-end'
           }}>
-            <PDFDownloadLink document={<PdfSubjectList subjectList={registeredSubjectList}/>} fileName="Dangky.pdf">
+            <PDFDownloadLink document={<PdfSubjectList subjectList={registeredSubjectList} />} fileName="Dangky.pdf">
               <Button type='primary' icon='file'>In kết quả</Button>
             </PDFDownloadLink>
 
           </div>
         </Row>
         <Row>
-          <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId}/>
+          <Table dataSource={allowedSubject} columns={this.columns} rowKey={(record) => record.subjectId} />
         </Row>
 
       </div>
@@ -199,4 +202,4 @@ class ExamRegister extends React.Component {
   }
 }
 
-export default withLayout('1')(Form.create({name: 'exmaRegistee'})(ExamRegister))
+export default withLayout('1')(Form.create({ name: 'exmaRegistee' })(ExamRegister))

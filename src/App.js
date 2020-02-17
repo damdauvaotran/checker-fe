@@ -23,7 +23,9 @@ import SubjectManager from './pages/admin/subject'
 import RoomManager from './pages/admin/room'
 import ShiftManager from './pages/admin/shift'
 import StudentManager from "./pages/admin/student";
+import SemesterManger from "./pages/admin/semester";
 import './assets/font/Roboto-Regular.ttf'
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
@@ -42,15 +44,18 @@ i18n
 function App() {
   return (
     <div className='App'>
-      <Router>
+      <Router forceRefresh={true}>
         <Switch>
+
           <Route exact path='/'>
             {
               requireAuth(<ExamRegister/>)
             }
           </Route>
           <Route path='/login'>
-            <Login/>
+            {
+              requireNotAuth(<Login/>)
+            }
           </Route>
           <Route path='/admin/subject'>
             {
@@ -72,8 +77,20 @@ function App() {
               requireAuth(<StudentManager/>)
             }
           </Route>
+          <Route exact path='/admin/semester'>
+            {
+              requireAuth(<SemesterManger/>)
+            }
+          </Route>
+          <Route exact path='/admin/semester/:id'>
+            {
+              requireAuth(<ShiftManager/>)
+            }
+          </Route>
           <Route path='/register'>
-            <Register/>
+            {
+              requireNotAuth(<Register/>)
+            }
           </Route>
         </Switch>
       </Router>
@@ -92,7 +109,20 @@ function requireAuth(component) {
       pathname: "/login",
     }}
   />
-
 }
+
+function requireNotAuth(component) {
+  if (!isLogin()) {
+    return (
+      component
+    )
+  }
+  return <Redirect
+    to={{
+      pathname: "/",
+    }}
+  />
+}
+
 
 export default App;
