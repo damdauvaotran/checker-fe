@@ -223,5 +223,3 @@ class SemesterManager extends React.Component {
 
 export default withRouter(withLayout('admin5')(Form.create({name: 'semester'})(SemesterManager)))
 // export default Form.create({name: 'semester'})(withLayout('admin5')(SemesterManager))
-
->>>>>>> feature/semester
