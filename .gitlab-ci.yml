@@ -50,6 +50,6 @@ deploy-stage:
 
     - ls
     # Copy file
-    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/html
+    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/mottrieuangi.codes/html/
     # Restart nginx
     - ssh $SERVER_USER@$SERVER_IP "/etc/init.d/nginx restart"
