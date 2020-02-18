@@ -46,8 +46,8 @@ deploy-stage:
   script:
     # Make folder
     - ssh $SERVER_USER@$SERVER_IP "[ ! -e /root/$APP_NAME ] || rm -r
-      /root/$APP_NAME; mkdir -p /root/$APP_NAME"
+      /root/$APP_NAME; mkdir -p /root/checker-fe"
 
     - ls
     # Copy file
-    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/root/$APP_NAME
+    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/usr/share/nginx/html/
