@@ -45,9 +45,9 @@ deploy-stage:
     - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
   script:
     # Make folder
-    - ssh $SERVER_USER@$SERVER_IP "[ ! -e /root/checker-fe ] || rm -r
-      /root/checker-fe; mkdir -p /root/checker-fe"
+    - ssh $SERVER_USER@$SERVER_IP "[ ! -e /root/$APP_NAME ] || rm -r
+      /root/$APP_NAME; mkdir -p /root/$APP_NAME"
 
     - ls
     # Copy file
-    # - rsync -zr ./* $SERVER_USER@$SERVER_IP:/root/checker-be
+    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/root/$APP_NAME
