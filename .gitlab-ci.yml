@@ -52,4 +52,4 @@ deploy-stage:
     # Copy file
     - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/html
     # Restart nginx
-    - service nginx restart
+    - /etc/init.d/nginx restart
