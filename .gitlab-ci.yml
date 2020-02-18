@@ -50,4 +50,6 @@ deploy-stage:
 
     - ls
     # Copy file
-    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/html/
+    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/html
+    # Restart nginx
+    - service nginx restart
