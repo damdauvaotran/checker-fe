@@ -45,11 +45,11 @@ deploy-stage:
     - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
   script:
     # Make folder
-    - ssh $SERVER_USER@$SERVER_IP "[ ! -e /root/$APP_NAME ] || rm -r
-      /root/$APP_NAME; mkdir -p /root/checker-fe"
+    # - ssh $SERVER_USER@$SERVER_IP "[ ! -e /root/$APP_NAME ] || rm -r
+    #   /root/$APP_NAME; mkdir -p /root/checker-fe"
 
     - ls
     # Copy file
-    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/mottrieuangi.codes/html/
+    - rsync -zr build/* $SERVER_USER@$SERVER_IP:/var/www/html/
     # Restart nginx
-    - ssh $SERVER_USER@$SERVER_IP "/etc/init.d/nginx restart"
+    - ssh $SERVER_USER@$SERVER_IP "nginx -s reload"
